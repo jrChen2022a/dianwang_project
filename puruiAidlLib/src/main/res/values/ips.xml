@@ -1,0 +1,11 @@
+<resources>
+<!--    // 1: 远程 40:22:d8:74:82:40   验电 40:22:d8:76:d0:c4-->
+<!--    // 2: 远程 c0:49:ef:f1:14:08   验电 f4:cf:a2:aa:20:c8-->
+<!--    // lab2: 远程 c8:f0:9e:49:0a:10   验电 84:0d:8e:3c:80:14-->
+<!--    // lab1: 远程 c4:4f:33:75:8c:61   验电 84:0d:8e:3c:80:14-->
+<!--    // cunhuo: 远程 7c:9e:bd:e3:8d:b0  验电 c8:f0:9e:9d:3a:a0-->
+    <string name="yuancheng">YUANCHENG_MAC</string>
+    <string name="yandian">YANDIAN_MAC</string>
+    <string name="yuancheng_default">40:22:d8:74:82:40</string>
+    <string name="yandian_default">40:22:d8:76:d0:c4</string>
+</resources>

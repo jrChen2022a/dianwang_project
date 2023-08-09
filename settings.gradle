@@ -1,0 +1,3 @@
+rootProject.name = "puruiservice"
+include ':puruiAidlLib'
+include ':client_demo_aidl'

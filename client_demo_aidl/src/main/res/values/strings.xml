@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">普瑞程序测试</string>
+    <string-array name="camera_type">
+        <item>关闭</item>
+        <item>平板</item>
+        <item>操作杆</item>
+        <item>验电器</item>
+    </string-array>
+    <string-array name="phase_type">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+    </string-array>
+</resources>

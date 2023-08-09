@@ -1,0 +1,29 @@
+
+https://www.douyin.com/
+
+管理查看 删除 增加 识别使用人脸接口的话，这部分可删去
+    private Bitmap getBitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                        : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        //canvas.setBitmap(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    done_05
+    result_off_02
+    result_off_03
+    result_on_02
+    result_on_03
+    select_off_01
+    select_on_01
+    wudian_04
+    youdian_04
+    result_take_03
+    result_invalid_03
+    dian_invalid_04
