@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 
 import com.purui.service.result.PuruiResult;
 import com.purui.service.Utils.Utils;
@@ -19,11 +20,16 @@ import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.FFmpegLogCallback;
 import org.bytedeco.javacv.Frame;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -32,6 +38,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -39,8 +47,6 @@ import okhttp3.ResponseBody;
 
 
 public class HTTPEspManager implements IEspHandle {
-    public static final String tag = "httpespmanager";
-    public static final int SCAN_TIMEOUT = 30;
     private final String[] ips = {null, null};
     private final IEspCallback mainService;
     private boolean show_cam = false;
@@ -67,7 +73,7 @@ public class HTTPEspManager implements IEspHandle {
         if(!((Utils.isHarmonyOs(ctx) || isWifiApOpen(ctx)) && (isWifiOpen(ctx) || isWifiApOpen(ctx)))){ //这一步是经过逻辑推理来的
             msg = "请先开启热点\"CAMERA\"";
         }else {
-            ArrayList<String[]> result = MNetWorkUtils.liseESP();
+            ArrayList<String[]> result = mNetWorkUtils.liseESP();
             String[] ip_strs = new String[result.size()];
             StringBuilder cat_str = new StringBuilder();
             boolean getYandianIP = false;
@@ -89,7 +95,7 @@ public class HTTPEspManager implements IEspHandle {
             }
             if(getYandianIP | getYuanchengIP){
                 if(ipLogFile.exists()){
-                    if(ipLogFile.delete())Log.v(tag,"del");
+                    ipLogFile.delete();
                 }
                 try{
                     Utils.writeTXT(ip_strs, ipLogFile);
@@ -204,7 +210,7 @@ public class HTTPEspManager implements IEspHandle {
                 }
             }
             if(ips[0] == null || ips[1] == null){
-                if(ipLogFile.delete())Log.v(tag,"del");
+                ipLogFile.delete();
             }
         }
     }
@@ -214,7 +220,7 @@ public class HTTPEspManager implements IEspHandle {
                 try {
                     InetAddress address = InetAddress.getByName(ip);
                     if(address.isReachable(100)){
-                        return true;
+                       return true;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -229,7 +235,7 @@ public class HTTPEspManager implements IEspHandle {
     private int frameIndex = 1;
     private final Callable<String> recordCall = new Callable<String>(){
         String newFileName;
-        private static final double frameRate = 8;//1表示1秒8个照片，
+        private final double frameRate = 8;//1表示1秒8个照片，
         final AndroidFrameConverter converter = new AndroidFrameConverter();
         @Override
         public String call() {
@@ -239,7 +245,7 @@ public class HTTPEspManager implements IEspHandle {
             File file = new File(newFileName);
             if (!file.exists()) {
                 try {
-                    if(file.createNewFile())Log.v(tag,"create file");
+                    file.createNewFile();
                     Log.d("main", "创建");
                 } catch (IOException e) {
                     e.printStackTrace();

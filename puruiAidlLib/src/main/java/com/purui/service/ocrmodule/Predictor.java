@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -130,7 +129,7 @@ class Predictor {
             byte[] lines = new byte[available];
             assetsInputStream.read(lines);
             assetsInputStream.close();
-            String words = new String(lines, StandardCharsets.UTF_8);
+            String words = new String(lines);
             String[] contents = words.split("\n");
             for (String content : contents) {
                 wordLabels.add(content);

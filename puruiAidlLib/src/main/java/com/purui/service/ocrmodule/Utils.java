@@ -32,12 +32,14 @@ class Utils {
             while ((length = is.read(buffer)) != -1) {
                 os.write(buffer, 0, length);
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                if(os!=null)os.close();
-                if(is!=null)is.close();
+                os.close();
+                is.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -50,7 +52,7 @@ class Utils {
         }
         try {
             if (!new File(dstDir).exists()) {
-                boolean mkdirs = new File(dstDir).mkdirs();
+                new File(dstDir).mkdirs();
             }
             for (String fileName : appCtx.getAssets().list(srcDir)) {
                 String srcSubPath = srcDir + File.separator + fileName;

@@ -19,13 +19,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class FaceManager implements IFaceHandle {
-    private static final String tag = "facemanager";
+
     private boolean modelLoaded = false;
     private final String facePath;
     private final String modelPath;
@@ -88,31 +85,30 @@ public class FaceManager implements IFaceHandle {
         PuruiResult[] ret = null;
         String file_name, user_name;
         String[] file_name_splitted;
-        Bitmap user_bmp;
+        Bitmap user_bmp = null;
         int id=0;
+
         File file = new File(facePath);
         File[] files = file.listFiles();
-        if(files != null){
-            int num = files.length;
-            if(num>0){
-                ret = new PuruiResult[num];
-                for(int i=0; i<num; i++){
-                    file_name = files[i].getName();
-                    file_name_splitted = file_name.split("\\.");
-                    if(file_name_splitted[1].equals("jpg")){ //|| file_name_splitted[1].equals("png") || file_name_splitted[1].equals("jpeg") || file_name_splitted[1].equals("bmp")
-                        user_name = file_name_splitted[0];
-                        FileInputStream fis = null;
-                        try {
-                            fis = new FileInputStream(files[i].getPath());
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        user_bmp = BitmapFactory.decodeStream(fis);
-                        if(user_bmp != null){
-                            //如果是图片
-                            ret[id++] = new PuruiResult(true,user_name,user_bmp);
+        int num = files.length;
+        if(num>0){
+            ret = new PuruiResult[num];
+            for(int i=0; i<num; i++){
+                file_name = files[i].getName();
+                file_name_splitted = file_name.split("\\.");
+                if(file_name_splitted[1].equals("jpg")){ //|| file_name_splitted[1].equals("png") || file_name_splitted[1].equals("jpeg") || file_name_splitted[1].equals("bmp")
+                    user_name = file_name_splitted[0];
+                    FileInputStream fis = null;
+                    try {
+                        fis = new FileInputStream(files[i].getPath());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    user_bmp = BitmapFactory.decodeStream(fis);
+                    if(user_bmp != null){
+                        //如果是图片
+                        ret[id++] = new PuruiResult(true,user_name,user_bmp);
 //                        System.out.println("face_width: "+user_bmp.getWidth()+" face_height: "+user_bmp.getHeight());
-                        }
                     }
                 }
             }
@@ -131,7 +127,7 @@ public class FaceManager implements IFaceHandle {
         if (!file.exists()) {
             FileOutputStream fileOutputStream = null;
             try {
-                if(file.createNewFile())Log.v(tag,"create file");
+                file.createNewFile();
                 fileOutputStream = new FileOutputStream(file);
                 face.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream);
                 fileOutputStream.flush();
@@ -184,10 +180,8 @@ public class FaceManager implements IFaceHandle {
     }
     private void writeFace() {
         try{
-            copyBigDataToSD(facePath, "张奇文_2.jpg");
-            copyBigDataToSD(facePath, "李鑫_2.jpg");
-            copyBigDataToSD(facePath, "李鑫_1.jpg");
-            copyBigDataToSD(facePath, "张奇文_1.jpg");
+            copyBigDataToSD(facePath, "张奇文.jpg");
+            copyBigDataToSD(facePath, "李鑫.jpg");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -209,7 +203,7 @@ public class FaceManager implements IFaceHandle {
     private void copyBigDataToSD(String sdPath, String strOutFileName) throws IOException {
         File file = new File(sdPath);
         if (!file.exists()) {
-            if(file.mkdir())Log.v(tag,"make dir");
+            file.mkdir();
         }
         String tmpFile = sdPath + strOutFileName;
         File f = new File(tmpFile);
@@ -217,24 +211,18 @@ public class FaceManager implements IFaceHandle {
 //            Log.i(TAG, "file exists " + strOutFileName);
             return;
         }
-        InputStream myInput = mainContext.getAssets().open(strOutFileName);
-        OutputStream myOutput = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            myOutput = Files.newOutputStream(Paths.get(sdPath + strOutFileName));
-        }
+        InputStream myInput;
+        java.io.OutputStream myOutput = new FileOutputStream(sdPath+ strOutFileName);
+        myInput = mainContext.getAssets().open(strOutFileName);
         byte[] buffer = new byte[1024];
         int length = myInput.read(buffer);
         while (length > 0) {
-            if(myOutput != null){
-                myOutput.write(buffer, 0, length);
-            }
+            myOutput.write(buffer, 0, length);
             length = myInput.read(buffer);
         }
-        if(myOutput!=null){
-            myOutput.flush();
-            myOutput.close();
-        }
+        myOutput.flush();
         myInput.close();
+        myOutput.close();
     }
     //人脸检测，截取最大人脸
     private Bitmap cutface(Bitmap img){
@@ -288,7 +276,8 @@ public class FaceManager implements IFaceHandle {
         int face_h = face.getHeight();
         double similar = 0.0;
         double msim = 0.0;
-        File file = new File(facePath);
+        String path = facePath;
+        File file = new File(path);
         File[] files = file.listFiles();
         String file_path = null;//文件路径
         String file_name = null;//文件名称
@@ -297,44 +286,42 @@ public class FaceManager implements IFaceHandle {
         Bitmap user_bmp = null;
         String recognition_name = null;
         String result = "识别成功，结果为：";
-        if(files != null){
-            for(int i=0; i<files.length; i++){
-                file_path = files[i].getPath();
-                file_name = files[i].getName();
-                file_name_splitted = file_name.split("\\.");
-                if(file_name_splitted[1].equals("jpg")){// || file_name_splitted[1].equals("png") || file_name_splitted[1].equals("jpeg") || file_name_splitted[1].equals("bmp")
-                    //如果是图片
-                    user_name = file_name_splitted[0];
-                    FileInputStream fis = null;
-                    try {
-                        fis = new FileInputStream(files[i].getPath());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    user_bmp = BitmapFactory.decodeStream(fis);
-                    if(user_bmp != null){
-                        Bitmap user_face = cutface(user_bmp);
-                        if(user_face!=null){
-                            byte[] user_faceData = getPixelsRGBA(user_face);
-                            int user_face_w = user_face.getWidth();
-                            int user_face_h = user_face.getHeight();
-                            similar = mFace.FaceRecognize(faceData, face_w, face_h, user_faceData, user_face_w, user_face_h);
-                            System.out.println("user_name: "+user_name+" similar: "+similar);
-                            if(similar>msim){
-                                msim = similar;
-                                recognition_name = user_name;
-                            }
+
+        for(int i=0; i<files.length; i++){
+            file_path = files[i].getPath();
+            file_name = files[i].getName();
+            file_name_splitted = file_name.split("\\.");
+            if(file_name_splitted[1].equals("jpg")){// || file_name_splitted[1].equals("png") || file_name_splitted[1].equals("jpeg") || file_name_splitted[1].equals("bmp")
+                //如果是图片
+                user_name = file_name_splitted[0];
+                FileInputStream fis = null;
+                try {
+                    fis = new FileInputStream(files[i].getPath());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                user_bmp = BitmapFactory.decodeStream(fis);
+                if(user_bmp != null){
+                    Bitmap user_face = cutface(user_bmp);
+                    if(user_face!=null){
+                        byte[] user_faceData = getPixelsRGBA(user_face);
+                        int user_face_w = user_face.getWidth();
+                        int user_face_h = user_face.getHeight();
+                        similar = mFace.FaceRecognize(faceData, face_w, face_h, user_faceData, user_face_w, user_face_h);
+                        System.out.println("user_name: "+user_name+" similar: "+similar);
+                        if(similar>msim){
+                            msim = similar;
+                            recognition_name = user_name;
                         }
                     }
                 }
             }
-            if(msim>0.4){
-                result += recognition_name.contains("_")?recognition_name.split("_")[0]:recognition_name;
-            }else{
-                result = "识别失败";
-            }
         }
-
+        if(msim>0.4){
+            result += recognition_name.split("_")[0];
+        }else{
+            result = "识别失败";
+        }
 
         return result;
     }

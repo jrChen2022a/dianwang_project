@@ -7,11 +7,11 @@ package com.purui.service.result;
  */
 public class LockResult {
     private boolean success;
-    private String details;
+    private String detail;
 
     public LockResult(boolean success, String details) {
         this.success = success;
-        this.details = details;
+        this.detail = details;
     }
 
     public boolean isSuccess() {
@@ -19,6 +19,6 @@ public class LockResult {
     }
 
     public String getDetails() {
-        return details;
+        return detail;
     }
 }

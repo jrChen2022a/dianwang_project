@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.google.code.gson:gson:2.8.9'
 //    implementation files('libs/purui_service-release.aar')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'

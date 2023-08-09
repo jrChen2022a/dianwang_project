@@ -48,20 +48,33 @@
         <!-- </intent-filter> -->
         <!-- </activity> -->
         <activity
-            android:name=".InnerActivity"
+            android:name=".DemoActivity2"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:exported="true" >
+            <intent-filter>
+                <data android:scheme="myapp"></data>
 
-        </activity>
-        <activity android:name=".DemoActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="landscape">
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".InnerActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

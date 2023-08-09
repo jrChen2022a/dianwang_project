@@ -15,14 +15,13 @@
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
 
+# 保留 OkHttp 的类和方法
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+
 -keep class com.purui.service.IPuruiService {*;}
 -keep class com.purui.service.IPuruiService$** {*;}
 -keep class com.purui.service.result.** { *;}
--keep class com.purui.service.PuruiResult{*;}
--keep class com.purui.service.IPuruiCallback{*;}
--keep class com.purui.service.DetectStatesListener{*;}
--keep class com.purui.service.RecognizeIDListener{*;}
-
 -keep class com.purui.service.cam.NativeCamManager{*;}
 
 -dontshrink
