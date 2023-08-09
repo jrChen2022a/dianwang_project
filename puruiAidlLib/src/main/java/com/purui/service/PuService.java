@@ -253,6 +253,8 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
                     CM.closeCam();
                     CM = null;
                 }
+
+
                 //无摄像头
                 setNoCamImage();
                 return true;
