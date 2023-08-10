@@ -24,13 +24,9 @@
 //import android.widget.TextView;
 //import android.widget.Toast;
 //
-//import com.purui.service.IPuruiCallback;
 //import com.purui.service.IPuruiService;
-//import com.purui.service.listener.CameraShowListener;
-//import com.purui.service.listener.ServiceConnectionListener;
 //import com.purui.service.result.OcrResult;
 //import com.purui.service.result.PuruiResult;
-//import com.purui.service.PuruiServiceManager;
 //import com.purui.service.result.StateResult;
 //
 //import java.io.File;
@@ -101,7 +97,7 @@
 //                findViewById(R.id.rbPad),   // 平板
 //                findViewById(R.id.rbOpe),   // 操作杆
 //                findViewById(R.id.rbEle));  // 验电器
-//        iPS.createService(new ServiceConnectionListener() {
+//        iPS.createService(new IPuruiService.ServiceConnectionListener() {
 //            @Override
 //            public void onConnected() {
 //                Toast.makeText(DemoActivity.this,"服务已连接上",Toast.LENGTH_SHORT).show();
@@ -117,15 +113,15 @@
 //        rgCameraType.setOnCheckedChangeListener((group, checkedId) -> {
 //            RadioButton checkedRadioButton = group.findViewById(checkedId);
 //            if (checkedRadioButton != null) {
-//                iPS.selectCamera(checkedRadioButton.getText().toString(), new CameraShowListener() {
+//                iPS.selectCamera(checkedRadioButton.getText().toString(), new IPuruiService.CameraShowListener() {
 //                    @Override
-//                    public void onSuccess(String base64Img) {
+//                    public void onCamShow(Bitmap bitmap) {
 //
 //                    }
 //
 //                    @Override
-//                    public void onSuccess(Bitmap bitmap) {
-//                        ivOri.setImageBitmap(bitmap);
+//                    public void onCamShow(byte[] bitmapbytes) {
+//
 //                    }
 //                });
 //            }

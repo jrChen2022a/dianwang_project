@@ -3,7 +3,10 @@ package com.purui.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
@@ -250,6 +253,8 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
                     CM.closeCam();
                     CM = null;
                 }
+
+
                 //无摄像头
                 setNoCamImage();
                 return true;
@@ -458,9 +463,9 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
 
     private boolean getEspStates(int CAMID, boolean showErrorMsg) {
         PuruiResult espInit = iEspHandle.getEspReady(CAMID);
-        if(showErrorMsg && !espInit.isDone()){
+//        if(showErrorMsg && !espInit.isDone()){
 //            makeToast(espInit.getDetails());
-        }
+//        }
         return espInit.isDone();
     }
     private void setNoCamImage(){
@@ -549,7 +554,8 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
 
     @Override
     public void setCamPhotoBytes(byte[] bytes) {
-        camPhotoBytes=bytes;
+        camPhotoBytes=bytes.clone();
+        camPhoto = Utils.bytes2bitmap(bytes,Bitmap.Config.ARGB_4444,1);
         final int num= callbackList.beginBroadcast();
         for (int i=0;i<num;i++){
             IPuAidlCallback iAidlCallBack=callbackList.getBroadcastItem(i);

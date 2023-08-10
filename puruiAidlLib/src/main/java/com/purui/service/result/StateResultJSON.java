@@ -14,7 +14,7 @@ public class StateResultJSON {
     private final int stateB;
     private final int stateC;
     private final String logImg;
-    private final String helper =
+    private static final String helper =
             " * success: 是否识别成功 \n"+
                     " * detail: 识别结果 \n"+
             " * state: 开关总体状态，序号分别对应：\n" +

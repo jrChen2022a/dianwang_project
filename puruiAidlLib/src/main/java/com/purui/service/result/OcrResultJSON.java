@@ -7,7 +7,7 @@ public class OcrResultJSON {
     private final String id;
     private final String detail;
     private final String logImg;
-    private final String helper = " * success: 是否识别成功\n" +
+    private static final String helper = " * success: 是否识别成功\n" +
             " * id: 识别出的文字\n" +
             " * details: 识别结果\n" +
             " * logImg: 识别图像反馈(base64码)";

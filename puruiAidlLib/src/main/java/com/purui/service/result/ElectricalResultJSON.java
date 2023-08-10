@@ -9,7 +9,7 @@ public class ElectricalResultJSON {
 //    private final String totalResult;
     private final String detail;
     private final String logImg;
-    private final String helper =
+    private static final String helper =
             " * success: 当前操作是否成功\n" +
             " * currentPhase: 当前选择相：A/B/C\n" +
             " * currentPhaseResult: 验电结果：带电/不带电/无效\n" +
