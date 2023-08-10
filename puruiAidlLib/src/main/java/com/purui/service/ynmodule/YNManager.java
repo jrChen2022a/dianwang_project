@@ -11,11 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class YNManager extends YNNative implements IModelHandle {
-    private static final String tag = "ynmanager";
     private final YNNative yolov5ncnn = new YNNative();
     private boolean modelLoaded = false;
     private final Context This;
@@ -44,7 +41,7 @@ public class YNManager extends YNNative implements IModelHandle {
 
         if(!modelLoaded){
 
-            boolean ret_init = yolov5ncnn.Init(localPath);
+            boolean ret_init = yolov5ncnn.Init(localPath);;
             if (!ret_init)
             {
                 Log.e("puruiService", "ynModule Init failed");
@@ -140,8 +137,6 @@ public class YNManager extends YNNative implements IModelHandle {
                         deStateABC[index] = 3;
                         paint.setColor(Color.BLUE);
                         break;
-                    default:
-                        break;
                 }
 
                 index++;
@@ -222,7 +217,7 @@ public class YNManager extends YNNative implements IModelHandle {
 //        Log.i(TAG, "start copy file " + strOutFileName);
         File file = new File(sdPath);
         if (!file.exists()) {
-            if(file.mkdir())Log.v(tag,"make dir");
+            file.mkdir();
         }
 
         String tmpFile = sdPath + strOutFileName;
@@ -231,24 +226,19 @@ public class YNManager extends YNNative implements IModelHandle {
 //            Log.i(TAG, "file exists " + strOutFileName);
             return;
         }
-        InputStream myInput = This.getAssets().open(strOutFileName);
-        java.io.OutputStream myOutput = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            myOutput = Files.newOutputStream(Paths.get(sdPath + strOutFileName));
-        }
+        InputStream myInput;
+        java.io.OutputStream myOutput = new FileOutputStream(sdPath+ strOutFileName);
+        myInput = This.getAssets().open(strOutFileName);
         byte[] buffer = new byte[1024];
         int length = myInput.read(buffer);
         while (length > 0) {
-            if(myOutput != null){
-                myOutput.write(buffer, 0, length);
-            }
+            myOutput.write(buffer, 0, length);
             length = myInput.read(buffer);
         }
-        if(myOutput != null){
-            myOutput.flush();
-            myOutput.close();
-        }
+        myOutput.flush();
         myInput.close();
+        myOutput.close();
 //        Log.i(TAG, "end copy file " + strOutFileName);
+
     }
 }

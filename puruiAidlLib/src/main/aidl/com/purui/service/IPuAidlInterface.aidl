@@ -31,5 +31,4 @@ interface IPuAidlInterface {
     ParcelFaceResult[] checkAllFaces();
     ParcelFaceResult addFace(in String name, in Bitmap bm);
     ParcelFaceResult deleteFace(in String name);
-    Bitmap getServiceBitmap(in String name);
 }

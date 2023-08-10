@@ -177,7 +177,11 @@ public class WifiApManage {
                     Method method2 = mWifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
                     method2.invoke(mWifiManager, config, true);
                 }
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -190,106 +194,109 @@ public class WifiApManage {
                 method.setAccessible(true);
                 mWifiConfiguration = (WifiConfiguration) method.invoke(mWifiManager);
 //                LogU.e("enter ssid : " + mWifiConfiguration.SSID + " pwd : " + mWifiConfiguration.preSharedKey);
+            } else {
+                Method method = mWifiManager.getClass().getMethod("getWifiApConfiguration");
+                method.setAccessible(true);
+                mWifiConfiguration = (WifiConfiguration) method.invoke(mWifiManager);
             }
-//            else {
-//                Method method = mWifiManager.getClass().getMethod("getWifiApConfiguration");
-//                method.setAccessible(true);
-//                mWifiConfiguration = (WifiConfiguration) method.invoke(mWifiManager);
-//            }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return mWifiConfiguration;
     }
 
 
-//    /**
-//     * 开热点手机获得其他连接手机IP的方法
-//     *
-//     * @return 其他手机IP 数组列表
-//     */
-//    public ArrayList<String> getConnectedIP() {
-//        ArrayList<String> connectedIp = new ArrayList<String>();
-//        BufferedReader br = null;
-//        FileReader fileReader = null;
-//        boolean flags = true;
-//        try {
-//            String line;
-//            fileReader = new FileReader("/proc/net/arp");
-//            br = new BufferedReader(fileReader);
-//
-//            mWifiManager.getDhcpInfo().toString();
-//
-//            while ((line = br.readLine()) != null) {
-//                if (!flags) {
-//                    final String[] splitted = line.split(" + ");
-//                    if (splitted != null && splitted.length >= 6) {
-//                        if (splitted[2].equals(AP_CONNECTED) && splitted[5].equals(AP_DEVICE_TYPE)) {
-//                            connectedIp.add(splitted[0] + " " + splitted[3]);
-//                        }
-//                    }
-//                }
-//                flags = false;
-//            }
-//
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (null != fileReader) {
-//                    fileReader.close();
-//                }
-//
-//                if (null != br) {
-//                    br.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return connectedIp;
-//    }
-//
-//    public String getClientDeviceName() {
-//        BufferedReader br = null;
-//        FileReader fileReader = null;
-//
-//        try {
-//            fileReader = new FileReader("/data/misc/dhcp/dnsmasq.leases");
-//            br = new BufferedReader(fileReader);
-//            String line = "";
-//            while ((line = br.readLine()) != null) {
-////                LogU.e("enter device name : " + line);
-//                if (line.indexOf("") != 1) {
-//                    String[] fields = line.split(" ");
-//                    //校验数据是不是破损
-//                    if (fields.length > 4) {
-//                        //返回第4个栏位
-//
-//                        return fields[3];
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (null != fileReader) {
-//                    fileReader.close();
-//                }
-//
-//                if (null != br) {
-//                    br.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return null;
-//    }
+    /**
+     * 开热点手机获得其他连接手机IP的方法
+     *
+     * @return 其他手机IP 数组列表
+     */
+    public ArrayList<String> getConnectedIP() {
+        ArrayList<String> connectedIp = new ArrayList<String>();
+        BufferedReader br = null;
+        FileReader fileReader = null;
+        boolean flags = true;
+        try {
+            String line;
+            fileReader = new FileReader("/proc/net/arp");
+            br = new BufferedReader(fileReader);
+
+            mWifiManager.getDhcpInfo().toString();
+
+            while ((line = br.readLine()) != null) {
+                if (!flags) {
+                    final String[] splitted = line.split(" + ");
+                    if (splitted != null && splitted.length >= 6) {
+                        if (splitted[2].equals(AP_CONNECTED) && splitted[5].equals(AP_DEVICE_TYPE)) {
+                            connectedIp.add(splitted[0] + " " + splitted[3]);
+                        }
+                    }
+                }
+                flags = false;
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fileReader) {
+                    fileReader.close();
+                }
+
+                if (null != br) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return connectedIp;
+    }
+
+    public String getClientDeviceName() {
+        BufferedReader br = null;
+        FileReader fileReader = null;
+
+        try {
+            fileReader = new FileReader("/data/misc/dhcp/dnsmasq.leases");
+            br = new BufferedReader(fileReader);
+            String line = "";
+            while ((line = br.readLine()) != null) {
+//                LogU.e("enter device name : " + line);
+                if (line.indexOf("") != 1) {
+                    String[] fields = line.split(" ");
+                    //校验数据是不是破损
+                    if (fields.length > 4) {
+                        //返回第4个栏位
+
+                        return fields[3];
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != fileReader) {
+                    fileReader.close();
+                }
+
+                if (null != br) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
 
 }

@@ -49,11 +49,11 @@ public class NativeCamManager {
     private final ICamCallback iCamCallback;
 
     private android.hardware.camera2.CameraManager cameraManager;
-//    private CameraCharacteristics mCameraCharacteristics;
+    private CameraCharacteristics mCameraCharacteristics;
     private CameraDevice mCameraDevice;
     private CaptureRequest.Builder mPreviewBuilder;
     private CameraCaptureSession mPreviewSession;
-//    private Handler mBackgroundHandler;
+    private Handler mBackgroundHandler;
     private int mCameraId;
     private ImageReader mImageReader;
 //    private int mOri;
@@ -64,32 +64,26 @@ public class NativeCamManager {
         init();
     }
 
-    public void closeCam() {
-        // 关闭摄像头设备
-        if (mCameraDevice != null) {
-            mCameraDevice.close();
-            mCameraDevice = null;
+    public void closeCam(){
+        mCameraDevice.close();
+        if (mBackgroundHandler != null) {
+            mBackgroundHandler.removeCallbacksAndMessages(null);
+            mBackgroundHandler = null;
         }
-
-//        // 清除BackgroundHandler中的消息
-//        if (mBackgroundHandler != null) {
-//            mBackgroundHandler.removeCallbacksAndMessages(null);
-//            mBackgroundHandler = null;
-//        }
-
-        // 关闭会话
-        if (mPreviewSession != null) {
+        if (null != mPreviewSession) {
             mPreviewSession.close();
             mPreviewSession = null;
         }
-
-        // 关闭图像读取器
-        if (mImageReader != null) {
+        if (null != mCameraDevice) {
+            mCameraDevice.close();
+            mCameraDevice = null;
+        }
+        if (null != mImageReader) {
             mImageReader.close();
             mImageReader = null;
         }
-    }
 
+    }
 
     private void requestCameraPermission(){
         if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA)
@@ -125,8 +119,8 @@ public class NativeCamManager {
                 int cameraId_FRONT = CameraCharacteristics.LENS_FACING_FRONT;
                 mCameraId = frontCam? cameraId_FRONT : cameraId_BACK;
                 cameraManager.openCamera(String.valueOf(mCameraId), mStateCallback, null);
-//                String[] cameraIdList = cameraManager.getCameraIdList();
-//                mCameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(mCameraId));
+                String[] cameraIdList = cameraManager.getCameraIdList();
+                mCameraCharacteristics = cameraManager.getCameraCharacteristics(String.valueOf(mCameraId));
 //                initZoomParameter();
 //                initDisplayRotation();
             } catch (CameraAccessException e) {
@@ -146,7 +140,7 @@ public class NativeCamManager {
             try {
                 mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
                 mImageReader = ImageReader.newInstance(640, 480, ImageFormat.JPEG, 2);//w320;h240
-                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, null);
+                mImageReader.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler);
 //                mPreviewBuilder.addTarget(previewSurface);
                 mPreviewBuilder.addTarget(mImageReader.getSurface());
                 // 设置连续自动对焦
@@ -158,7 +152,7 @@ public class NativeCamManager {
                 //            mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
                 //            mPreviewBuilder.set(CaptureRequest.CONTROL_AE_MODE,CameraMetadata.CONTROL_AE_MODE_ON);
 //                mCameraDevice.createCaptureSession(Arrays.asList(previewSurface, mImageReader.getSurface()), previewSessionStateCallback, mBackgroundHandler);
-                mCameraDevice.createCaptureSession(Collections.singletonList(mImageReader.getSurface()), previewSessionStateCallback, null);
+                mCameraDevice.createCaptureSession(Collections.singletonList(mImageReader.getSurface()), previewSessionStateCallback, mBackgroundHandler);
 
             } catch (CameraAccessException e) {
                 e.printStackTrace();
@@ -179,7 +173,7 @@ public class NativeCamManager {
         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
             mPreviewSession = cameraCaptureSession;
             try {
-                mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, null);
+                mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, mBackgroundHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }

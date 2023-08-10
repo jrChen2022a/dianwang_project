@@ -3,10 +3,7 @@ package com.purui.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.IBinder;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
@@ -455,43 +452,15 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
             PuruiResult res  = iFaceHandle.deleteFace(name);
             return new ParcelFaceResult(res.isDone(),res.getBitmap(),res.getDetails());
         }
-        @Override
-        public Bitmap getServiceBitmap(String name){
-            Bitmap ret = null;
-            switch (name){
-                case "camera_off":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.camera_off);
-                    break;
-                case "lock":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.lock);
-                    break;
-                case "unlock":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.unlock);
-                    break;
-                case "result_off":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.result_off_03);
-                    break;
-                case "result_on":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.result_on_03);
-                    break;
-                case "result_take":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.result_take_03);
-                    break;
-                case "result_invalid":
-                    ret = BitmapFactory.decodeResource(getResources(),R.drawable.result_invalid_03);
-                    break;
-                default:
-                    break;
-            }
-            return ret;
-        }
+
+
     };
 
     private boolean getEspStates(int CAMID, boolean showErrorMsg) {
         PuruiResult espInit = iEspHandle.getEspReady(CAMID);
-//        if(showErrorMsg && !espInit.isDone()){
+        if(showErrorMsg && !espInit.isDone()){
 //            makeToast(espInit.getDetails());
-//        }
+        }
         return espInit.isDone();
     }
     private void setNoCamImage(){
@@ -580,8 +549,7 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
 
     @Override
     public void setCamPhotoBytes(byte[] bytes) {
-        camPhotoBytes=bytes.clone();
-        camPhoto = Utils.bytes2bitmap(bytes,Bitmap.Config.ARGB_4444,1);
+        camPhotoBytes=bytes;
         final int num= callbackList.beginBroadcast();
         for (int i=0;i<num;i++){
             IPuAidlCallback iAidlCallBack=callbackList.getBroadcastItem(i);

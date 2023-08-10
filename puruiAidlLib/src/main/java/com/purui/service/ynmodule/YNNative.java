@@ -18,7 +18,7 @@ import android.graphics.Bitmap;
 
 class YNNative
 {
-    protected static class Obj
+    protected class Obj
     {
         public float x;
         public float y;
