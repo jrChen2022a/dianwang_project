@@ -95,7 +95,7 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
     private NativeCamManager CM = null;
     @Override
     public Context getContext(){
-        return This;
+        return this;
     }
 
     @Override
