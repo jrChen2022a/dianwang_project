@@ -9,13 +9,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    private static final String TAG = "aa";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main4);
         Log.d(TAG, "onCreate: ");
+        findViewById(R.id.button);
     }
+    private static final String TAG = "aa";
 
     @Override
     protected void onStart() {
