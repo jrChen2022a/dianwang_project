@@ -97,10 +97,17 @@ public interface IPuruiService {
     LockResult lockDevice();
 
     /**
-     * 验电接口，分两步完成。第一步：确认是否到达验电区域；第二步：测试验电相是否带电
+     * 验电接口
      * @param selectPhase 当前验电相
      */
-     ElectricalResult testElectricity(char selectPhase);
+     void testElectricity(char selectPhase, TestEleCallback cb);
+    /**
+     * 验电结果回调
+     */
+    interface TestEleCallback{
+        void onSuccess(ElectricalResult res);
+        void onFail(ElectricalResult res);
+    }
 
     /**
      * 重置接口
@@ -173,5 +180,4 @@ public interface IPuruiService {
          */
         void onFail(String reason);
     }
-
 }

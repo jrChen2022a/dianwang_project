@@ -29,6 +29,7 @@ import com.purui.service.result.StateResult;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PuruiServiceManager implements IPuruiService{
     private final Context mainCtx;
@@ -110,6 +111,10 @@ public class PuruiServiceManager implements IPuruiService{
 
     @Override
     public void destroyService(){
+        testingElectricity = false;
+        if(testElectricityThread != null){
+            testElectricityThread.interrupt();
+        }
         selectCamera(Objects.requireNonNull(camType2cameraType.get(CAM_WU)),null);
         //解除注册
         if (null != iAidlInterface && iAidlInterface.asBinder().isBinderAlive()) {
@@ -409,76 +414,83 @@ public class PuruiServiceManager implements IPuruiService{
         }
         return new LockResult(res, res?"设备已闭锁":"设备闭锁失败");
     }
+    private Thread testElectricityThread = null;
+    private volatile boolean testingElectricity = false;
 
     @Override
-    public ElectricalResult testElectricity(char currentPhase) {
+    public void testElectricity(char currentPhase, TestEleCallback cb) {
         if(camType != CAM_YAN){
-            return new ElectricalResult(false,currentPhase+"","无效","无效","请打开验电摄像头",null);
+            cb.onFail(new ElectricalResult(false,currentPhase+"","无效","无效","请打开验电摄像头",null));
         }
-        ElectricalResult res;
-        boolean whetherToTest = true;
-        boolean openYandianCam = true;
-        Bitmap retBitmap = null;
-        if (iAidlInterface != null) {
-            try {
-                ParcelDetectResult pdr = iAidlInterface.getWhetherToTestElectro(currentPhase);
-                if(pdr != null){
-                    whetherToTest = pdr.getWhetherToTest();
-                    openYandianCam = pdr.isOpenYanCam();
-                    retBitmap = pdr.getResBitmap();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        if (whetherToTest) {
-            String resback = null;
-            if (iAidlInterface != null) {
-                try {
-                    resback = iAidlInterface.getElectroTestRes();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-            boolean validCheck = resback != null && resback.contains("带电");
-            int phase = -1;
-            if(resback != null){
-                phase = resback.contains("A相")?0:resback.contains("B相")?1:2;
-                isABCtested[phase] = validCheck;
-            }
-            if(!validCheck){
-                res = new ElectricalResult(false,currentPhase+"","无效","无效",resback,retBitmap);
-            }else {
-                int ABCeleRes = (resback.contains("不带电"))?0:1;
-                String eleRes = ABCeleRes==0?"不带电":"带电";
-                if(phase == 0){
-                    isAElectro = ABCeleRes;
-                }else if(phase == 1){
-                    isBElectro = ABCeleRes;
-                }else{
-                    isCElectro = ABCeleRes;
-                }
-                String totalRes = "无效";
-                if(isABCtested[0]&isABCtested[1]&isABCtested[2]){
-                    resback += "\n验电完毕";
-                    if(isAElectro == 0 && isBElectro == 0 && isCElectro == 0){
-                        resback += "\n结果：不带电";
-                        totalRes = "不带电";
-                    }else{
-                        resback += "\n结果：带电";
-                        totalRes = "带电";
+        testElectricityThread = new Thread(()->{
+            boolean whetherToTest = false;
+            boolean openYandianCam = true;
+            Bitmap retBitmap = null;
+            testingElectricity = true;
+            while(!whetherToTest && testingElectricity) {
+                if (iAidlInterface != null) {
+                    try {
+                        ParcelDetectResult pdr = iAidlInterface.getWhetherToTestElectro(currentPhase);
+                        if (pdr != null) {
+                            whetherToTest = pdr.getWhetherToTest();
+                            openYandianCam = pdr.isOpenYanCam();
+                            retBitmap = pdr.getResBitmap();
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
                 }
-                res = new ElectricalResult(true,currentPhase+"",eleRes,totalRes,resback,retBitmap);
             }
-        } else {
-            if(camType == CAM_YAN && !openYandianCam){
-                selectCamera("关闭", (CameraShowListener) null);
+            if(whetherToTest){
+                String resback = null;
+                if (iAidlInterface != null) {
+                    try {
+                        resback = iAidlInterface.getElectroTestRes();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                boolean validCheck = resback != null && resback.contains("带电");
+                int phase = -1;
+                if(resback != null){
+                    phase = resback.contains("A相")?0:resback.contains("B相")?1:2;
+                    isABCtested[phase] = validCheck;
+                }
+                if(!validCheck){
+                    cb.onFail(new ElectricalResult(false, currentPhase + "", "无效", "无效", resback, retBitmap));
+                }else {
+                    int ABCeleRes = (resback.contains("不带电"))?0:1;
+                    String eleRes = ABCeleRes==0?"不带电":"带电";
+                    if(phase == 0){
+                        isAElectro = ABCeleRes;
+                    }else if(phase == 1){
+                        isBElectro = ABCeleRes;
+                    }else{
+                        isCElectro = ABCeleRes;
+                    }
+                    String totalRes = "无效";
+                    if(isABCtested[0]&isABCtested[1]&isABCtested[2]){
+                        resback += "\n验电完毕";
+                        if(isAElectro == 0 && isBElectro == 0 && isCElectro == 0){
+                            resback += "\n结果：不带电";
+                            totalRes = "不带电";
+                        }else{
+                            resback += "\n结果：带电";
+                            totalRes = "带电";
+                        }
+                    }
+                    cb.onSuccess(new ElectricalResult(true, currentPhase + "", eleRes, totalRes, resback, retBitmap));
+                }
+            } else {
+                if(camType == CAM_YAN && !openYandianCam){
+                    selectCamera("关闭", (CameraShowListener) null);
+                }
+                String detail = !openYandianCam?"验电摄像头未开启":"未满足验电条件，不可以执行验电操作";
+                cb.onFail(new ElectricalResult(false,currentPhase+"","无效","无效",detail,retBitmap));
             }
-            String detail = !openYandianCam?"验电摄像头未开启":"未满足验电条件，不可以执行验电操作";
-            res = new ElectricalResult(false,currentPhase+"","无效","无效",detail,retBitmap);
-        }
-        return res;
+        });
+        testElectricityThread.setDaemon(true);
+        testElectricityThread.start();
     }
 
     @Override

@@ -167,14 +167,17 @@ public class DemoActivity2 extends AppCompatActivity {
                         break;
                     case 5:
                         //验电 状态
-                        ElectricalResult res2 = iPS.testElectricity(selectPhase);
-                        if(res2.getLogImg()==null){
-                            handler.post(()-> Toast.makeText(getApplicationContext(),"请打开验电器",Toast.LENGTH_SHORT).show());
-                        }else{
-                            handler.post(()->{
-                                goBackApp(gson.toJson(new ElectricalResultJSON(res2)));
-                            });
-                        }
+                        iPS.testElectricity(selectPhase, new IPuruiService.TestEleCallback() {
+                            @Override
+                            public void onSuccess(ElectricalResult res) {
+                                handler.post(()-> goBackApp(gson.toJson(new ElectricalResultJSON(res))));
+                            }
+
+                            @Override
+                            public void onFail(ElectricalResult res) {
+                                handler.post(()-> Toast.makeText(getApplicationContext(),"请打开验电器",Toast.LENGTH_SHORT).show());
+                            }
+                        });
                         break;
                     default:
                         break;
