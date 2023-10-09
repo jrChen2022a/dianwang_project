@@ -142,7 +142,11 @@ public interface IPuruiService {
      *      .getDetails(): 到达则返回："可以执行验电操作"
      *                     否则返回：  "不可以执行验电操作"
      */
-    PuruiResult whetherToTestElectro(char selectPhase);
+    void whetherToTestElectro(char selectPhase, TestElectricityCallback cb);
+    interface TestElectricityCallback{
+        void onContacted(PuruiResult res);
+        void onFail(PuruiResult res);
+    }
 
     /**
      * 第二步

@@ -46,6 +46,7 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
     private IPuAidlInterface iAidlInterface;
     private IPuruiCallback iPuruiCallback;
     private final ProgressDialog mProgressDialog;
+    private final ProgressDialog mListeningDialog;
     private final Handler handler;
     private final int mode;
     private TextView tvRec;
@@ -92,6 +93,8 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
         this.cbIsTakeOn = cbIsTakeOn;
         mProgressDialog = new ProgressDialog(mainCtx);
         mProgressDialog.setCancelable(false);
+        mListeningDialog = new ProgressDialog(mainCtx);
+        mListeningDialog.setCancelable(false);
         handler = new Handler();
         mode = 0;
     }
@@ -100,6 +103,8 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
         this.mainCtx = iPuruiCallback.getActivity();
         mProgressDialog = new ProgressDialog(mainCtx);
         mProgressDialog.setCancelable(false);
+        mListeningDialog = new ProgressDialog(mainCtx);
+        mListeningDialog.setCancelable(false);
         handler = new Handler();
         mode = 1;
     }
@@ -143,7 +148,7 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
             //serviceConnectionListener.onDisconnected();
         }
     };
-    private final IPuAidlCallback iAidlCallBack=new IPuAidlCallback.Stub() {
+    private final IPuAidlCallback iAidlCallBack = new IPuAidlCallback.Stub() {
         @Override
         public void setNoCamImage(){
             if(mode ==0){
@@ -199,6 +204,10 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
     @Override
     public void stopService() {
         selectCamera("关闭");
+        if(testElectricityThread != null){
+            testingElectricity = false;
+            testElectricityThread.interrupt();
+        }
     }
 
     @Override
@@ -632,59 +641,76 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
 
     @Override
     public PuruiResult whetherToTestElectro(char selectPhase) {
-        boolean whetherToTest = true;
-        boolean openYandianCam = true;
-        Bitmap retBitmap = null;
-        if (iAidlInterface != null) {
-            try {
-                ParcelDetectResult pdr = iAidlInterface.getWhetherToTestElectro(selectPhase);
-                if(pdr != null){
-                    whetherToTest = pdr.getWhetherToTest();
-                    openYandianCam = pdr.isOpenYanCam();
-                    retBitmap = pdr.getResBitmap();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        if(camType == CAM_YAN && !openYandianCam){
-            selectCamera("关闭");
-        }
-        if(retBitmap != null){
-            if(mode == 0){
-                ivDet.setImageBitmap(retBitmap);
-            }else{
-                iPuruiCallback.setDetUI(retBitmap);
-            }
-        }
-        if (whetherToTest) {
-            return new PuruiResult(true, "可以执行验电操作", retBitmap);
-        } else {
-            if(mode == 0){
-                if(selectPhase == 'A'){
-                    tvElectroA.setText("未验电");
-                    tvElectroA.setTextColor(Color.BLACK);
-                }else if(selectPhase == 'B'){
-                    tvElectroB.setText("未验电");
-                    tvElectroB.setTextColor(Color.BLACK);
-                }else {
-                    tvElectroC.setText("未验电");
-                    tvElectroC.setTextColor(Color.BLACK);
-                }
-            }else if(mode == 1){
-                iPuruiCallback.setEleTestUI(selectPhase-'A',2);
-            }
-//            Toast.makeText(mainActivity.getApplicationContext(), "不可以执行验电操作", Toast.LENGTH_SHORT).show();
-            if(camType == CAM_YAN && !openYandianCam){
-                selectCamera("关闭");
-            }
-            return new PuruiResult(false, "不可以执行验电操作");
-        }
-//        String detail = !openYandianCam?"验电摄像头未开启":"未满足验电条件，不可以执行验电操作";
-//        if(!whetherToTest)iPuruiCallback.setEleTestUI(currentPhase-'A',2);
-//        return new PuruiResult(whetherToTest,whetherToTest?"可以验电":detail,retBitmap);
+        return null;
     }
 
+    private volatile boolean testingElectricity = false;
+    private Thread testElectricityThread;
+    @Override
+    public void whetherToTestElectro(char selectPhase, TestElectricityCallback cb){
+        testElectricityThread = new Thread(()->{
+            boolean whetherToTest = false;
+            boolean openYandianCam = true;
+            Bitmap retBitmap = null;
+            testingElectricity = true;
+            while(!whetherToTest && testingElectricity){
+                if (iAidlInterface != null) {
+                    try {
+                        ParcelDetectResult pdr = iAidlInterface.getWhetherToTestElectro(selectPhase);
+                        if(pdr != null){
+                            whetherToTest = pdr.getWhetherToTest();
+                            openYandianCam = pdr.isOpenYanCam();
+                            retBitmap = pdr.getResBitmap();
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    if(camType == CAM_YAN && !openYandianCam){
+                        handler.post(()->selectCamera("关闭"));
+                        break;
+                    }
+                }
+            }
+            Bitmap finalRetBitmap = retBitmap;
+            if(retBitmap != null){
+                if(mode == 0){
+                    handler.post(()->ivDet.setImageBitmap(finalRetBitmap));
+                }else{
+                    handler.post(()->iPuruiCallback.setDetUI(finalRetBitmap));
+                }
+            }
+            handler.post(()->{
+                mListeningDialog.dismiss();
+                cb.onContacted(new PuruiResult(true, "可以执行验电操作", finalRetBitmap));
+            }) ;
+        });
+        testElectricityThread.setDaemon(true);
+        testElectricityThread.start();
+        mListeningDialog.setMessage("正在监听行程开关...");
+        mListeningDialog.show();
+//        if (whetherToTest) {
+//            return new PuruiResult(true, "可以执行验电操作", retBitmap);
+//        } else {
+//            if(mode == 0){
+//                if(selectPhase == 'A'){
+//                    tvElectroA.setText("未验电");
+//                    tvElectroA.setTextColor(Color.BLACK);
+//                }else if(selectPhase == 'B'){
+//                    tvElectroB.setText("未验电");
+//                    tvElectroB.setTextColor(Color.BLACK);
+//                }else {
+//                    tvElectroC.setText("未验电");
+//                    tvElectroC.setTextColor(Color.BLACK);
+//                }
+//            }else if(mode == 1){
+//                iPuruiCallback.setEleTestUI(selectPhase-'A',2);
+//            }
+//            if(camType == CAM_YAN && !openYandianCam){
+//                selectCamera("关闭");
+//            }
+//            return new PuruiResult(false, "不可以执行验电操作");
+//        }
+    }
     @Override
     public PuruiResult testElectricity() {
         String resback = null;

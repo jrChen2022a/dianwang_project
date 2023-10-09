@@ -148,7 +148,7 @@ public class DemoActivity extends AppCompatActivity {
         ));
         //开关状态检测
         btnStateDetect.setOnClickListener(v -> PSM.preDetectStates(
-                "跌落保险", "给上",
+                "跌落保险", "拉开",
                 res -> {
                     Bitmap bitmap = res.getBitmap();
                     cbStateDetect.setChecked(res.isDone());
@@ -158,14 +158,24 @@ public class DemoActivity extends AppCompatActivity {
 
         // 测试验电接口 没改过
         btnElectroTest.setOnClickListener(view -> {
-            PuruiResult res = PSM.whetherToTestElectro(selectPhase);
-            Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
-            if(res.isDone()){
-                Bitmap bitmap = res.getBitmap();
-                PuruiResult res1 = PSM.testElectricity();
-                cbElectroTest.setChecked(res1.isDone());
-                Toast.makeText(getApplicationContext(), res1.getDetails(), Toast.LENGTH_SHORT).show();
-            }
+            PSM.whetherToTestElectro(selectPhase, new IPuruiService.TestElectricityCallback() {
+                @Override
+                public void onContacted(PuruiResult res) {
+                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+                    if(res.isDone()){
+                        Bitmap bitmap = res.getBitmap();
+                        PuruiResult res1 = PSM.testElectricity();
+                        cbElectroTest.setChecked(res1.isDone());
+                        Toast.makeText(getApplicationContext(), res1.getDetails(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFail(PuruiResult res) {
+
+                }
+            });
+
         });
         // 测试闭锁接口 没改过
         btnLock.setOnClickListener(view -> {
