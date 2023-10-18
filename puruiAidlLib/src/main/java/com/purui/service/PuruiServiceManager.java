@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -648,6 +649,10 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
     private Thread testElectricityThread;
     @Override
     public void whetherToTestElectro(char selectPhase, TestElectricityCallback cb){
+        if(camType != CAM_YAN){
+            cb.onFail(new PuruiResult(false, "验电摄像头未开启"));
+            return;
+        }
         testElectricityThread = new Thread(()->{
             boolean whetherToTest = false;
             boolean openYandianCam = true;
@@ -672,21 +677,25 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
                 }
             }
             Bitmap finalRetBitmap = retBitmap;
-            if(retBitmap != null){
+            if(whetherToTest && retBitmap != null){
                 if(mode == 0){
                     handler.post(()->ivDet.setImageBitmap(finalRetBitmap));
                 }else{
                     handler.post(()->iPuruiCallback.setDetUI(finalRetBitmap));
                 }
+                handler.post(()->{
+                    mListeningDialog.dismiss();
+                    cb.onContacted(new PuruiResult(true, "可以执行验电操作", finalRetBitmap));
+                }) ;
             }
-            handler.post(()->{
-                mListeningDialog.dismiss();
-                cb.onContacted(new PuruiResult(true, "可以执行验电操作", finalRetBitmap));
-            }) ;
         });
         testElectricityThread.setDaemon(true);
         testElectricityThread.start();
         mListeningDialog.setMessage("正在监听行程开关...");
+        mListeningDialog.setButton("取消", (dialog, which) -> {
+            testingElectricity = false;
+            mListeningDialog.dismiss();
+        });
         mListeningDialog.show();
 //        if (whetherToTest) {
 //            return new PuruiResult(true, "可以执行验电操作", retBitmap);

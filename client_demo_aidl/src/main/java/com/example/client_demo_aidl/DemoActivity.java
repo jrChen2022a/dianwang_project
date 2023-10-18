@@ -172,7 +172,7 @@ public class DemoActivity extends AppCompatActivity {
 
                 @Override
                 public void onFail(PuruiResult res) {
-
+                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
                 }
             });
 
