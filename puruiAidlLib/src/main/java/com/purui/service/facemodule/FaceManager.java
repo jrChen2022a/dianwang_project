@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 
 public class FaceManager implements IFaceHandle {
     private static final String tag = "facemanager";
+    private static final float thresh = 0.7f;
     private boolean modelLoaded = false;
     private final String facePath;
     private final String modelPath;
@@ -328,7 +329,7 @@ public class FaceManager implements IFaceHandle {
                     }
                 }
             }
-            if(msim>0.4){
+            if(msim>thresh){
                 result += recognition_name.contains("_")?recognition_name.split("_")[0]:recognition_name;
             }else{
                 result = "识别失败";
