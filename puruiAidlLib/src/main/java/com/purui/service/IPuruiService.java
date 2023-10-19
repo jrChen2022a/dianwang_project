@@ -132,6 +132,7 @@ public interface IPuruiService {
      */
     PuruiResult lockDevice();
 
+    PuruiResult isElectricityTesterValid();
     // 验电接口，分两步完成。第一步：确认是否到达验电区域；第二步：测试验电相是否带电
     /**
      * 第一步

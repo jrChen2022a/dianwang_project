@@ -158,23 +158,26 @@ public class DemoActivity extends AppCompatActivity {
 
         // 测试验电接口 没改过
         btnElectroTest.setOnClickListener(view -> {
-            PSM.whetherToTestElectro(selectPhase, new IPuruiService.TestElectricityCallback() {
-                @Override
-                public void onContacted(PuruiResult res) {
-                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
-                    if(res.isDone()){
-                        Bitmap bitmap = res.getBitmap();
-                        PuruiResult res1 = PSM.testElectricity();
-                        cbElectroTest.setChecked(res1.isDone());
-                        Toast.makeText(getApplicationContext(), res1.getDetails(), Toast.LENGTH_SHORT).show();
-                    }
-                }
+            PuruiResult res = PSM.isElectricityTesterValid();
+            Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
 
-                @Override
-                public void onFail(PuruiResult res) {
-                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
-                }
-            });
+//            PSM.whetherToTestElectro(selectPhase, new IPuruiService.TestElectricityCallback() {
+//                @Override
+//                public void onContacted(PuruiResult res) {
+//                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+//                    if(res.isDone()){
+//                        Bitmap bitmap = res.getBitmap();
+//                        PuruiResult res1 = PSM.testElectricity();
+//                        cbElectroTest.setChecked(res1.isDone());
+//                        Toast.makeText(getApplicationContext(), res1.getDetails(), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFail(PuruiResult res) {
+//                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
 
         });
         // 测试闭锁接口 没改过

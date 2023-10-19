@@ -641,6 +641,40 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
     }
 
     @Override
+    public PuruiResult isElectricityTesterValid() {
+        if(camType != CAM_YAN){
+            return new PuruiResult(false, "验电摄像头未开启");
+        }
+        PuruiResult res = new PuruiResult(false, "验电器未完好");
+        if (iAidlInterface != null) {
+            boolean whetherToTest = false;
+            try {
+                ParcelDetectResult pdr = iAidlInterface.getWhetherToTestElectro('A');
+                if(pdr != null){
+                    whetherToTest = pdr.getWhetherToTest();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            if(whetherToTest) {
+                String resback = null;
+                if (iAidlInterface != null) {
+                    try {
+                        resback = iAidlInterface.getElectroTestRes();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                boolean validCheck = resback != null && resback.contains("相带电");
+                if(validCheck){
+                    res = new PuruiResult(true, "验电器完好");
+                }
+            }
+        }
+        return res;
+    }
+
+    @Override
     public PuruiResult whetherToTestElectro(char selectPhase) {
         return null;
     }
