@@ -517,18 +517,20 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <CheckBox
+                    <androidx.appcompat.widget.AppCompatCheckBox
                         android:id="@+id/checkBoxDeviceUnlock"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="false"
+                        android:button="@drawable/style_checkbox_unlock"
                         android:text="解锁" />
 
-                    <CheckBox
+                    <androidx.appcompat.widget.AppCompatCheckBox
                         android:id="@+id/checkBoxDeviceLock"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="false"
+                        android:button="@drawable/style_checkbox_lock"
                         android:text="闭锁" />
                 </LinearLayout>
 
