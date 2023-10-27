@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 
 public class FaceManager implements IFaceHandle {
     private static final String tag = "facemanager";
-    private static final float thresh = 0.7f;
+    private static final float thresh = 0.58f;
     private boolean modelLoaded = false;
     private final String facePath;
     private final String modelPath;
