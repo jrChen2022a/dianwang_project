@@ -139,7 +139,7 @@ public class DemoActivity extends AppCompatActivity {
 
         //设备识别
         btnIdReco.setOnClickListener(v -> PSM.preRecognizeID(
-                "10kV前光（后光）一线 10#（3713K009）",
+                "10kV前光线13支8号杆（3713K009）",
                 res -> {
                     cbIdReco.setChecked(res.isDone());
                     Bitmap bitmap = res.getBitmap();
@@ -259,7 +259,7 @@ public class DemoActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
             PSM.preRecognizeID(
-                    imageBitmap, "10kV前光（后光）一线 10#（3713K009）",
+                    imageBitmap, "10kV前光线13支8号杆（3713K009）",
                     res -> {
                         cbIdReco.setChecked(res.isDone());
                         Bitmap bitmap = res.getBitmap();

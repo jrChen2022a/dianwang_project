@@ -557,7 +557,10 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
         if(serialKey != null){
             inID = inID.replace(serialKey,"");
         }
-        inID = Utils.removeSpecialChars(inID).toUpperCase();
+        inID = Utils.removeSpecialChars(inID).toUpperCase()
+                .replace("号","").replace("#","")
+                .replace("(","").replace(")","")
+                .replace("（","").replace("）","");
         boolean res = false;
         Bitmap retBitmap = null;
         String resID = "";
@@ -570,8 +573,8 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
                 e.printStackTrace();
             }
         }
-        String ID = Utils.removeSpecialChars(resID).toUpperCase();
-        if (serialKey != null && ID.contains(serialKey) || (serialKey == null && ID.contains(inID))) {
+        String ID = Utils.removeSpecialChars(resID).toUpperCase().replace("号","").replace("#","");
+        if (serialKey != null && ID.contains(serialKey) || ID.contains(inID)) {
             res = true;
         }
         if(mode == 0){
