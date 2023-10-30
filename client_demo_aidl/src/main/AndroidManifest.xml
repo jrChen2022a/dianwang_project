@@ -22,12 +22,13 @@
         android:theme="@style/Theme.Puruiservice"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".DemoActivity2"
+            android:name=".DemoActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="landscape"
             android:exported="true" >
             <intent-filter>
                 <data android:scheme="myapp"></data>
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -37,21 +38,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        <activity-->
-<!--            android:name=".InnerActivity"-->
-<!--            android:configChanges="orientation|keyboardHidden"-->
-<!--            android:screenOrientation="landscape">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
-
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.example.client_demo_aidl.fileprovider"
+            android:authorities="com.example.demoapplication.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
