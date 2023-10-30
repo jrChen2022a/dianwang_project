@@ -2,176 +2,165 @@ package com.purui.service;
 
 import android.graphics.Bitmap;
 
-import androidx.annotation.WorkerThread;
-import com.purui.service.result.CamSelectResult;
-import com.purui.service.result.ElectricalResult;
-import com.purui.service.result.FaceResult;
-import com.purui.service.result.LockResult;
-import com.purui.service.result.OcrResult;
-import com.purui.service.result.StateResult;
+import com.purui.service.PuruiResult;
 
 public interface IPuruiService {
     // 服务相关
     /**
      * 创建服务，在onCreate()以及调用接口前使用
      */
-    void createService(ServiceConnectionListener listener);
+    void createService();
 
     /**
      * 销毁服务，在onDestroy()调用
      */
     void destroyService();
 
+    /**
+     * 在onStop()处调用
+     */
+    void stopService();
+
+    /**
+     * 在onResume处调用
+     */
+    void resumeService();
+
 
     // 人脸接口
     /**
      * 获取人脸识别结果
      * @param photo 待识别照片
+     * @return PuruiResult:
+     *      .isDone(): 当前操作成功与否
+     *      .getBitmap(): 识别到的人脸图片
+     *      .getDetails(): 识别成功则返回： “XXX” (姓名)
+     *                          否则返回： “识别失败，请重试！”
      */
-    FaceResult getFaceResult(Bitmap photo);
+    PuruiResult getFaceResult(Bitmap photo);
 
     /**
      * 获取人脸库
+     * @return PuruiResult[]:人脸信息，同上
+     *      .getBitmap(): 人脸图片
+     *      .getDetails(): “XXX” (姓名)
      */
-    FaceResult[] checkFaces();
+    PuruiResult[] checkFaces();
 
     /**
      * 添加人脸
      * @param name 姓名
      * @param photo 待入库照片
+     * @return PuruiResult:
+     *      .isDone(): 当前操作成功与否
+     *      .getBitmap(): 识别到的人脸图片
+     *      .getDetails():  添加成功则返回：“XXX 录入成功”
+     *                    失败则有两种情况：1.无存储权限，此时返回： "录入失败，请检查权限"
+     *                                   2.人脸库中已存在，此时返回："数据库中已存在该用户！"
      */
-    FaceResult addFace(String name, Bitmap photo);
+    PuruiResult addFace(String name, Bitmap photo);
 
     /**
      * 删除人脸
      * @param name 姓名
+     * @return PuruiResult:
+     *      .isDone(): 当前操作成功与否
+     *      .getDetails(): 删除成功返回："XXX 删除成功！"
+     *                       失败则返回："XXX 删除失败！"
      */
-    FaceResult deleteFace(String name);
+    PuruiResult deleteFace(String name);
 
     // 摄像头接口
     /**
      * 扫描 操作杆和验电器
-     * 耗时操作，需开启线程
-     * @return 扫描结果：扫描到的设备及其IP地址信息或扫描失效信息
      */
-    @WorkerThread
-    String scanCameras();
+    void scanCameras();
 
     /**
      * 选择摄像头
      * @param cameraType 摄像头类型： 关闭、平板、操作杆、验电器
-     * @param listener 连接摄像头后的回调（如实时传图片）
+     *      .isDone(): 当前操作成功与否
+     *      .getDetails(): 打开 操作杆/验电器 成功时返回：“摄像头打开成功”
+     *                                      失败时返回：“摄像头连接失败”
+     *                              关闭摄像头成功时返回：”关闭成功“
      */
-    CamSelectResult selectCamera(String cameraType, CameraShowListener listener);
+    PuruiResult selectCamera(String cameraType);
 
+    // 状态检测接口
     /**
-     * 获取摄像头图像
-     * @return 摄像头当前帧
-     */
-    Bitmap getCamFrame();
-
-    /**
-     * 状态检测接口
-     * @param inBitmap 输入待检测图片
+     * 状态检测接口，在iPuruiCallback中onPostDetectStates接口处返回检测结果
      * @param switchType 开关类型：跌落保险、刀闸（隔离开关）、开关（断路器）
      * @param targetState 开关状态：合上、拉开、取下、给上
      */
-    StateResult detectStates(Bitmap inBitmap, String switchType, String targetState);
+    void preDetectStates(String switchType, String targetState, DetectStatesListener listener);
 
     /**
-     * 状态检测接口
-     * @param inBitmap 输入待识别图片
+     * 同上，需要在使用前确保平板已开启
+     * @param inBitmap 输入待检测图片
+     */
+    void preDetectStates(Bitmap inBitmap, String switchType, String targetState, DetectStatesListener listener);
+
+    // 杆塔ID识别接口
+    /**
+     * 杆塔ID识别接口，在iPuruiCallback中onPostRecognizeID接口处返回识别结果
      * @param inID 需验证的设备ID
      */
-    OcrResult recognizeID(Bitmap inBitmap, String inID);
+    void preRecognizeID(String inID, RecognizeIDListener listener);
+
+    /**
+     * 同上，需要在使用前确保平板已开启
+     * @param inBitmap 输入待识别图片
+     */
+    void preRecognizeID(Bitmap inBitmap, String inID, RecognizeIDListener listener);
 
     // 解闭锁接口
     /**
      * 操作设备解锁接口
+     * @return PuruiResult:
+     *      .isDone(): 当前操作成功与否
+     *      .getDetails(): 成功则返回："设备已解锁"
+     *                     失败则返回："设备解锁失败"
      */
-    LockResult unlockDevice();
+    PuruiResult unlockDevice();
 
     /**
      * 操作设备闭锁接口
+     * @return PuruiResult:
+     *      .isDone(): 当前操作成功与否
+     *      .getDetails(): 成功则返回："设备已闭锁"
+     *                     失败则返回："设备闭锁失败"
      */
-    LockResult lockDevice();
+    PuruiResult lockDevice();
+
+    // 验电接口，分两步完成。第一步：确认是否到达验电区域；第二步：测试验电相是否带电
+    /**
+     * 第一步
+     * @param selectPhase 当前选择相
+     * @return PuruiResult:
+     *      .isDone(): 是否到达验电处
+     *      .getBitmap(): 拍照图片返回
+     *      .getDetails(): 到达则返回："可以执行验电操作"
+     *                     否则返回：  "不可以执行验电操作"
+     */
+    PuruiResult whetherToTestElectro(char selectPhase);
 
     /**
-     * 验电接口，分两步完成。第一步：确认是否到达验电区域；第二步：测试验电相是否带电
-     * @param selectPhase 当前验电相
+     * 第二步
+     * @return PuruiResult:
+     *      .isDone(): 是否成功验证带电信息
+     *      .getDetails():  成功验证则返回："X相带电/不带电" (X=A/B/C)
+     *                      若测满三相带电信息会返回：
+     *                      "
+     *                         X相带电/不带电
+     *                         验电完毕
+     *                         结果：带电/不带电
+     *                      "
+     *                      否则返回："X相验电超时，请重试"
      */
-     ElectricalResult testElectricity(char selectPhase);
+    PuruiResult testElectricity();
 
     /**
      * 重置接口
      */
     void resetAll();
-
-    /**
-     * 这个是内部app用来录制数据集用的
-     * 录像接口，分两次使用，当没有录象时使用会开始录像，已经录像时会停止录像
-     * @param listener 录像时回调函数
-     */
-    void recordVideo(RecordListener listener);
-
-
-    /**
-     * Service连接回调
-     */
-    interface ServiceConnectionListener {
-        /**
-         * Service已启动
-         */
-        void onConnected();
-
-        /**
-         * Service已断开
-         */
-        void onDisconnected();
-    }
-
-    /**
-     * 连接摄像头的回调
-     */
-    interface CameraShowListener {
-        /**
-         * 实时回调Bitmap图像
-         */
-        void onCamShow(Bitmap bitmap);
-
-        /**
-         * 将Bitmap转成二进制数组回调
-         */
-        void onCamShow(byte[] bitmapbytes);
-    }
-
-    /**
-     * 录像回调
-     */
-    interface RecordListener {
-        /**
-         * 触发录像
-         * @param state 录像状态（已开始）
-         */
-        void onStartRecord(String state);
-
-        /**
-         * 显示录像动画（弹窗显示）
-         * @param bitmap 录像的实时过程
-         */
-        void onRecording(Bitmap bitmap);
-
-        /**
-         * 触发录像终止
-         * @param state 录像状态（已完成）
-         */
-        void onEndRecord(String state);
-
-        /**
-         * 录像功能失败
-         * @param reason 失败原因
-         */
-        void onFail(String reason);
-    }
-
 }

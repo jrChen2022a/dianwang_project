@@ -21,7 +21,7 @@ public class PuruiResult {
         this.checked = ckd;
         this.details = more;
     }
-    public PuruiResult(boolean ckd, String more,Bitmap bm){
+    public PuruiResult(boolean ckd, String more, Bitmap bm){
         this.checked = ckd;
         this.details = more;
         this.retBitmap = bm;

@@ -1,6 +1,5 @@
 package com.purui.service.espmodule;
 
-import android.os.Build;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -11,11 +10,12 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-public class mNetWorkUtils {
-    static String TAG = "mNetWorkUtils";
+public class MNetWorkUtils {
+    static String TAG = "MNetWorkUtils";
     //查看本地IP
     private static String getMobileIpAddress() {
         try {
@@ -89,7 +89,7 @@ public class mNetWorkUtils {
                             }
                             ip[3] = (byte) i;
                             InetAddress address = InetAddress.getByAddress(ip);
-                            if(address.isReachable(20))
+                            if(address.isReachable(HTTPEspManager.SCAN_TIMEOUT))
                             {
                                 IP_list.add(address.toString().split("/")[1]);
 //                                Log.d(TAG, address + " machine is turned on and can be pinged");
@@ -129,7 +129,7 @@ public class mNetWorkUtils {
                     // Get response
                     int responseCode = connection.getResponseCode();
                     if(responseCode == HttpURLConnection.HTTP_OK){
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
                         StringBuilder response = new StringBuilder();
                         String line;
                         while ((line = reader.readLine()) != null) {
