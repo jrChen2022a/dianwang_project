@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 圆形背景 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF"/> <!-- 背景色，你可以根据需要更改 -->
+        </shape>
+    </item>
+
+    <!-- 图片放在圆形背景上 -->
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/avator42" />
+    </item>
+</layer-list>

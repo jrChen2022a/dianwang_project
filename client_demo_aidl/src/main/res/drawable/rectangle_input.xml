@@ -1,0 +1,50 @@
+<!--<layer-list xmlns:android="http://schemas.android.com/apk/res/android">-->
+
+<!--&lt;!&ndash; 底层矩形，表示主形状 &ndash;&gt;-->
+<!--    <item>-->
+<!--        <shape>-->
+<!--            <solid android:color="#000000" /> &lt;!&ndash; 设置背景颜色，这里使用白色 &ndash;&gt;-->
+<!--            <corners-->
+<!--                android:topLeftRadius="55dp"-->
+<!--                android:topRightRadius="55dp"-->
+<!--                android:bottomLeftRadius="0dp"-->
+<!--                android:bottomRightRadius="0dp" /> &lt;!&ndash; 右下角圆角半径为0，即方角 &ndash;&gt;-->
+<!--        </shape>-->
+<!--    </item>-->
+<!--    &lt;!&ndash; 上层矩形，表示阴影 &ndash;&gt;-->
+<!--    <item android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="4dp">-->
+<!--        <shape android:shape="rectangle">-->
+<!--            <solid android:color="#FFFFFF"/> &lt;!&ndash; 阴影颜色，这里使用了半透明的黑色 &ndash;&gt;-->
+<!--            <corners android:radius="0dp"/> &lt;!&ndash; 阴影的圆角大小 &ndash;&gt;-->
+<!--        </shape>-->
+<!--    </item>-->
+
+<!--</layer-list>-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- This is the main color -->
+    <item>
+        <shape>
+            <!--    边框颜色 -->
+            <solid android:color="#CECEDB"/>
+            <corners
+                android:topLeftRadius="5dp"
+                android:topRightRadius="5dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" /> <!-- 右下角圆角半径为0，即方角 -->
+        </shape>
+    </item>
+    <!-- 给View的上 左  右设置8dp的边框 -->
+    <item android:bottom="2dp">
+        <shape>
+            <!--     View填充颜色 -->
+            <solid android:color="#FFFFFF" />
+            <corners
+                android:topLeftRadius="5dp"
+                android:topRightRadius="5dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" /> <!-- 右下角圆角半径为0，即方角 -->
+        </shape>
+    </item>
+
+
+</layer-list>
