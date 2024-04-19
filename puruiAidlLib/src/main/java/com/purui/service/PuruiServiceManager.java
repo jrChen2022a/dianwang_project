@@ -118,7 +118,7 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
                 resetAll();
                 if(mode == 0){
                     Bitmap bmp = iAidlInterface.getServiceBitmap("camera_off");
-                    ivDevice.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("lock"),ivDevice));
+//                    ivDevice.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("lock"),ivDevice));
                     ivOri.setImageBitmap(Utils.resizeBitmap(bmp,ivOri));
                     ivDet.setImageBitmap(Utils.resizeBitmap(bmp,ivDet));
                 }else if(mode == 1){
@@ -359,12 +359,12 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-
-        innerSwitchType = switchType;
-        innerTargetState = targetState;
-        DrawDialogFragment dialog = new DrawDialogFragment();
-        DrawDialogTask task = new DrawDialogTask(mainCtx.getSupportFragmentManager(), dialog,bm,this,DrawDialogFragment.MODE_STATE);//
-        task.execute();
+        innerDetect(switchType,targetState);
+//        innerSwitchType = switchType;
+//        innerTargetState = targetState;
+//        DrawDialogFragment dialog = new DrawDialogFragment();
+//        DrawDialogTask task = new DrawDialogTask(mainCtx.getSupportFragmentManager(), dialog,bm,this,DrawDialogFragment.MODE_STATE);//
+//        task.execute();
     }
 
     @Override
@@ -851,25 +851,25 @@ public class PuruiServiceManager implements IPuruiService, IInnerService{
         isAElectro = 2;
         isBElectro = 2;
         isCElectro = 2;
-        if(mode == 0){
-            tvRec.setText("");
-            cbIsOff.setChecked(false);
-            cbIsOn.setChecked(false);
-            cbIsTakeOff.setChecked(false);
-            cbIsTakeOn.setChecked(false);
-            try{
-                ivA.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("result_invalid"),ivA));
-                ivB.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("result_invalid"),ivB));
-                ivC.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("result_invalid"),ivC));
-                tvElectroA.setText("未验电");   tvElectroA.setTextColor(Color.BLACK);
-                tvElectroB.setText("未验电");   tvElectroB.setTextColor(Color.BLACK);
-                tvElectroC.setText("未验电");   tvElectroC.setTextColor(Color.BLACK);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }else if(mode == 1){
-            iPuruiCallback.resetUI();
-        }
+//        if(mode == 0){
+//            tvRec.setText("");
+//            cbIsOff.setChecked(false);
+//            cbIsOn.setChecked(false);
+//            cbIsTakeOff.setChecked(false);
+//            cbIsTakeOn.setChecked(false);
+//            try{
+//                ivA.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("result_invalid"),ivA));
+//                ivB.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("result_invalid"),ivB));
+//                ivC.setImageBitmap(Utils.resizeBitmap(iAidlInterface.getServiceBitmap("result_invalid"),ivC));
+//                tvElectroA.setText("未验电");   tvElectroA.setTextColor(Color.BLACK);
+//                tvElectroB.setText("未验电");   tvElectroB.setTextColor(Color.BLACK);
+//                tvElectroC.setText("未验电");   tvElectroC.setTextColor(Color.BLACK);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }else if(mode == 1){
+//            iPuruiCallback.resetUI();
+//        }
     }
 
     private static final HashMap<Integer, String> camType2cameraType = new HashMap<>();
