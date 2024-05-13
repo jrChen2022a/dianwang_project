@@ -53,7 +53,7 @@ public class DemoActivity extends AppCompatActivity {
     private Button btnPho = null;
     private final String SUCCESS_CODE = "0";
     private boolean isCamOpen = false;
-
+    private RadioGroup rgCameraType;
     private String seq=null;
     private int invokeType=-1;
     private String targetId;
@@ -71,7 +71,7 @@ public class DemoActivity extends AppCompatActivity {
 
         ivOri = findViewById(R.id.image2);            //摄像头实时画面
         btnPho = findViewById(R.id.buttonPho);
-        RadioGroup rgCameraType = findViewById(R.id.rgCameraType);      //摄像头选择 单选框组
+        rgCameraType = findViewById(R.id.rgCameraType);      //摄像头选择 单选框组
         tvKey = findViewById(R.id.tvKeyInfo);
         List<RadioButton> rbsCameraTypeList  = new ArrayList<>();
         Collections.addAll(rbsCameraTypeList,
@@ -85,6 +85,7 @@ public class DemoActivity extends AppCompatActivity {
         iPS.createService(new IPuruiService.ServiceConnectionListener() {
             @Override
             public void onConnected() {
+                rgCameraType.check(R.id.rbPad);
 //                Toast.makeText(getApplicationContext(),"服务已连接上",Toast.LENGTH_SHORT).show();
             }
             @Override
@@ -262,7 +263,6 @@ public class DemoActivity extends AppCompatActivity {
             mProgressDialog.setMessage("请确保摄像头已连接上热点，并尽量靠近当前设备");
             mProgressDialog.show();
         });
-
         setDefaultCamUI();
         // 解析i国网透传的参数信息
         parseScheme(getIntent());
