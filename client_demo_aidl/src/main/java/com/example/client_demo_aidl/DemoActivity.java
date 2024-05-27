@@ -33,6 +33,8 @@ import com.purui.service.result.OcrResultJSON;
 import com.purui.service.result.StateResult;
 import com.purui.service.result.StateResultJSON;
 import org.json.JSONObject;
+
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -274,6 +276,7 @@ public class DemoActivity extends AppCompatActivity {
             DebugUtils.writeDebugLog(this, "receive scheme:" + uri);
             seq = uri.getQueryParameter("seq");
             String param = uri.getQueryParameter("param");
+            param = param.replace(" ","+");
             DebugUtils.writeDebugLog(this, "get seq:" + seq);
             DebugUtils.writeDebugLog(this, "get param:" + param);
             try {
