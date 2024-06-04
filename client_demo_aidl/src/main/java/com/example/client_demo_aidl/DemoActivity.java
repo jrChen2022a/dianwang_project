@@ -325,7 +325,12 @@ public class DemoActivity extends AppCompatActivity {
         String encodedData = Base64.encodeToString(data.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
         Uri uri = Uri.parse("wxworklocal://jsapi/requst3rdapp_result?errcode="+errCode+"&seq=" + seq + "&data=" + encodedData);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
+        try{
+            startActivity(intent);
+        }catch (android.content.ActivityNotFoundException e){
+            e.printStackTrace();
+            DebugUtils.writeDebugLog(this, e.toString());
+        }
     }
     private void setDefaultCamUI() {
         Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.camera_off);
