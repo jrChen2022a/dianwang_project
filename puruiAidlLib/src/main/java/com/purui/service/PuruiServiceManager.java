@@ -37,7 +37,7 @@ import com.purui.service.ynmodule.DrawDialogTask;
 import java.util.HashMap;
 import java.util.List;
 
-public class PuruiServiceManager implements IPuruiService, IInnerService{
+public class PuruiServiceManager implements IInnerService{
     private final AppCompatActivity mainCtx;
     private boolean[] isABCtested = {false,false,false};
     private int isAElectro = 2; // 0 stands for no, 1 for yes, 2 for null

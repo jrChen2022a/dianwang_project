@@ -79,7 +79,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation files('src\\main\\jniLibs\\ffmpeg.jar')
+    implementation files('src\\main\\jniLibs\\ffmpeg.jar') // 前期的需求“从esp32cam上录制视频”的时候用到这么几个图像库，后期改成手机录制了，这几个可以不用，就是AIDL的startRecord和stopRecord接口
     implementation files('src\\main\\jniLibs\\javacpp.jar')
     implementation files('src\\main\\jniLibs\\javacv.jar')
     implementation files('src\\main\\jniLibs\\opencv.jar')

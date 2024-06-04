@@ -6,7 +6,6 @@ import androidx.core.content.FileProvider;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,7 +25,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.purui.service.IPuruiCallback;
 import com.purui.service.IPuruiService;
 import com.purui.service.PuruiResult;
 import com.purui.service.PuruiServiceManager;
@@ -107,6 +105,86 @@ public class DemoActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
                 }
         ));
+
+        // 测试验电接口
+        btnElectroTest.setOnClickListener(view -> {
+            PuruiResult res = PSM.isElectricityTesterValid();
+            Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+//            以前的做法，分两步，后来更新成一步
+//            PSM.whetherToTestElectro(selectPhase, new IPuruiService.TestElectricityCallback() {
+//                @Override
+//                public void onContacted(PuruiResult res) {
+//                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+//                    if(res.isDone()){
+//                        Bitmap bitmap = res.getBitmap();
+//                        PuruiResult res1 = PSM.testElectricity();
+//                        cbElectroTest.setChecked(res1.isDone());
+//                        Toast.makeText(getApplicationContext(), res1.getDetails(), Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFail(PuruiResult res) {
+//                    Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+
+        });
+        // 测试闭锁接口
+        btnLock.setOnClickListener(view -> {
+            PuruiResult res = PSM.lockDevice();
+            cbLock.setChecked(res.isDone());
+            Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+        });
+        // 测试解锁接口
+        btnUnlock.setOnClickListener(view -> {
+            PuruiResult res = PSM.unlockDevice();
+            cbUnlock.setChecked(res.isDone());
+            Toast.makeText(getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+        });
+        // 测试重置接口
+        btnReset.setOnClickListener(v -> {
+            PSM.resetAll();
+            cbIdReco.setChecked(false);
+            cbStateDetect.setChecked(false);
+            cbElectroTest.setChecked(false);
+            cbLock.setChecked(false);
+            cbUnlock.setChecked(false);
+        });
+        // 测试人脸识别接口
+        btnFace.setOnClickListener(v ->{
+            Bitmap demo = null;
+            try {
+                demo = BitmapFactory.decodeStream(getAssets().open("test3.jpg"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            PuruiResult res = PSM.getFaceResult(demo);  //识别
+            if(res.isDone()){
+                String name = res.getDetails();
+                Bitmap face = res.getBitmap();
+                ivSupervisor.setImageBitmap(face);
+                String text = "监护人: "+name;
+                tvSupervisor.setText(text);
+            }
+            Toast.makeText(this.getApplicationContext(), res.getDetails(), Toast.LENGTH_SHORT).show();
+        });
+        // 测试人脸查看、删除、增加接口
+        btnFaceManage.setOnClickListener(v -> {
+            Bitmap demo = null;
+            try {
+                demo = BitmapFactory.decodeStream(getAssets().open("addFaceDemo.jpg"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            PuruiResult[] res = PSM.checkFaces();   //查看
+            PuruiResult res1 = PSM.deleteFace("李鑫"); //删除
+            Toast.makeText(this.getApplicationContext(), res1.getDetails(), Toast.LENGTH_SHORT).show();
+            res = PSM.checkFaces(); //查看
+            PuruiResult res2 = PSM.addFace("李鑫", demo); //增加
+            Toast.makeText(this.getApplicationContext(), res2.getDetails(), Toast.LENGTH_SHORT).show();
+            res = PSM.checkFaces();  //查看
+        });
     }
     @Override
     public void onResume() {
