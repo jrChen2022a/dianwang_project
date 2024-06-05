@@ -65,7 +65,7 @@ public class PuruiServiceManager implements IPuruiService{
                         Manifest.permission.CAMERA
                 }, 1);
             }
-            serviceConnectionListener.onConnected();
+            uiHandler = serviceConnectionListener.onConnected();
         }
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
@@ -101,6 +101,7 @@ public class PuruiServiceManager implements IPuruiService{
     };
 
     private ServiceConnectionListener serviceConnectionListener;
+    private UIHandler uiHandler;
     
     @Override
     public void createService(ServiceConnectionListener listener) {
@@ -435,6 +436,7 @@ public class PuruiServiceManager implements IPuruiService{
                             whetherToTest = pdr.getWhetherToTest();
                             openYandianCam = pdr.isOpenYanCam();
                             retBitmap = pdr.getResBitmap();
+                            testingElectricity = false;
                         }
                     } catch (RemoteException e) {
                         e.printStackTrace();
@@ -483,7 +485,7 @@ public class PuruiServiceManager implements IPuruiService{
                 }
             } else {
                 if(camType == CAM_YAN && !openYandianCam){
-                    selectCamera("关闭", (CameraShowListener) null);
+                    uiHandler.closeCamera();
                 }
                 String detail = !openYandianCam?"验电摄像头未开启":"未满足验电条件，不可以执行验电操作";
                 cb.onFail(new ElectricalResult(false,currentPhase+"","无效","无效",detail,retBitmap));

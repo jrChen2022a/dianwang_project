@@ -125,11 +125,14 @@ public interface IPuruiService {
     /**
      * Service连接回调
      */
+    interface UIHandler{
+        void closeCamera();
+    }
     interface ServiceConnectionListener {
         /**
          * Service已启动
          */
-        void onConnected();
+        UIHandler onConnected();
 
         /**
          * Service已断开

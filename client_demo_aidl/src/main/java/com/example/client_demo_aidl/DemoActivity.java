@@ -86,9 +86,10 @@ public class DemoActivity extends AppCompatActivity {
         iPS = new PuruiServiceManager(this);
         iPS.createService(new IPuruiService.ServiceConnectionListener() {
             @Override
-            public void onConnected() {
-                rgCameraType.check(R.id.rbPad);
+
+            public IPuruiService.UIHandler onConnected() {
 //                Toast.makeText(getApplicationContext(),"服务已连接上",Toast.LENGTH_SHORT).show();
+                return null;
             }
             @Override
             public void onDisconnected() {
