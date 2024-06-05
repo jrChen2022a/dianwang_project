@@ -322,6 +322,11 @@ public class DemoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 跳回i国网APP
+     * @param errCode
+     * @param data
+     */
     private  void  goBackApp(String errCode, String data) {// 错误码，0 表示成功，其他表示失败
         String encodedData = Base64.encodeToString(data.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
         Uri uri = Uri.parse("wxworklocal://jsapi/requst3rdapp_result?errcode="+errCode+"&seq=" + seq + "&data=" + encodedData);
