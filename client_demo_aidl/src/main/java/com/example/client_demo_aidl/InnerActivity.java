@@ -170,8 +170,8 @@ public class InnerActivity extends AppCompatActivity {
 
         //设备识别
         btnIdReco.setOnClickListener(v ->{
-            mThreadPool.execute(()->{
-                OcrResult res = iPS.recognizeID(iPS.getCamFrame(), "10kV前光（后光）一线 10#（3713K009）");
+            mThreadPool.execute(()->{  //"10kV前光（后光）一线 10#（3713K009）"
+                OcrResult res = iPS.recognizeID(iPS.getCamFrame(), "10kV观井线96号支83号");
                 handler.post(()->{
                     ivDet.setImageBitmap(res.getBitmap());
                     tvRec.setText(res.getId());
