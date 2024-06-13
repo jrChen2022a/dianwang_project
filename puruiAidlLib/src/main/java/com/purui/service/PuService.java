@@ -458,6 +458,12 @@ public class PuService extends Service implements IEspCallback, ICamCallback {
             return new ParcelFaceResult(res.isDone(),res.getBitmap(),res.getDetails());
         }
 
+        @Override
+        public void onCamZoomChanged(float zoomLevel){
+            if(CM != null){
+                CM.onCamZoomChanged(zoomLevel);
+            }
+        }
 
     };
 

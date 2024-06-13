@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.gson.Gson;
 import com.purui.service.IPuruiService;
 import com.purui.service.PuruiServiceManager;
+import com.purui.service.cam.ZoomView;
 import com.purui.service.result.CamSelectResult;
 import com.purui.service.result.ElectricalResult;
 import com.purui.service.result.ElectricalResultJSON;
@@ -57,11 +59,12 @@ public class DemoActivity extends AppCompatActivity {
     private boolean isCamOpen = false;
     private RadioGroup rgCameraType;
     private String seq=null;
-    private int invokeType=-1;
+    private int invokeType = -1;
     private String targetId;
     private String targetType;
     private String targetState;
     private Character selectPhase;
+    private ZoomView zoomMask;
     Uri mUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,7 @@ public class DemoActivity extends AppCompatActivity {
         btnPho = findViewById(R.id.buttonPho);
         rgCameraType = findViewById(R.id.rgCameraType);      //摄像头选择 单选框组
         tvKey = findViewById(R.id.tvKeyInfo);
+        zoomMask = findViewById(R.id.zoommask);
         List<RadioButton> rbsCameraTypeList  = new ArrayList<>();
         Collections.addAll(rbsCameraTypeList,
                 findViewById(R.id.rbClose),
@@ -89,6 +93,12 @@ public class DemoActivity extends AppCompatActivity {
 
             public IPuruiService.UIHandler onConnected() {
 //                Toast.makeText(getApplicationContext(),"服务已连接上",Toast.LENGTH_SHORT).show();
+                zoomMask.setZoomListener(new ZoomView.ZoomListener() {
+                    @Override
+                    public void onZoomChanged(float zoomLevel) {
+                        iPS.onCamZoomChanged(zoomLevel);
+                    }
+                });
                 return null;
             }
             @Override
@@ -113,7 +123,7 @@ public class DemoActivity extends AppCompatActivity {
                         Log.v("activity", String.valueOf(bitmapbytes.length));
                     }
                 });
-                if(res.getSelectCamId()==0 || !res.isSuccess()){
+                if(res.getSelectCamId() == PuruiServiceManager.CAM_WU || !res.isSuccess()){
                     rbsCameraTypeList.get(0).setChecked(true);
                     setDefaultCamUI();
                     if(!res.isSuccess()) {
@@ -122,6 +132,11 @@ public class DemoActivity extends AppCompatActivity {
                     }
                 }else{
                     isCamOpen = true;
+                }
+                if(res.getSelectCamId() == PuruiServiceManager.CAM_PAD){
+                    zoomMask.setVisibility(View.VISIBLE);
+                }else{
+                    zoomMask.setVisibility(View.GONE);
                 }
             }
         });
@@ -213,41 +228,6 @@ public class DemoActivity extends AppCompatActivity {
 
         });
 
-//        btnFace.setOnClickListener(v ->{
-//            // 人脸识别接口测试
-//            Bitmap demo = null;
-//            try {
-//                demo = BitmapFactory.decodeStream(getAssets().open("test2.jpg"));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            FaceResult res = iPS.getFaceResult(demo);  //识别
-//            if(res.isSuccess()){
-//                String name = res.getName();
-//                Bitmap face = res.getFace();
-//                ivSupervisor.setImageBitmap(face);
-//                tvSupervisor.setText("监护人: "+name);
-//            }
-//            Toast.makeText(this.getApplicationContext(), res.getName(), Toast.LENGTH_SHORT).show();
-//        });
-//
-//        btnFaceManage.setOnClickListener(v -> {
-//            // 人脸管理接口测试
-//            Bitmap demo = null;
-//            try {
-//                demo = BitmapFactory.decodeStream(getAssets().open("addFaceDemo.jpg"));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            FaceResult[] res = iPS.checkFaces();   //查看
-//            FaceResult res1 = iPS.deleteFace("李鑫"); //删除
-//            Toast.makeText(this.getApplicationContext(), res1.getName(), Toast.LENGTH_SHORT).show();
-//            res = iPS.checkFaces(); //查看
-//            FaceResult res2 = iPS.addFace("李鑫", demo); //增加
-//            Toast.makeText(this.getApplicationContext(), res2.getName(), Toast.LENGTH_SHORT).show();
-//            res = iPS.checkFaces();  //查看
-//
-//        });
 
         //扫描摄像头 按钮
         findViewById(R.id.buttonScan).setOnClickListener(v-> {

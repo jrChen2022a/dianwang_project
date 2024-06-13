@@ -183,4 +183,6 @@ public interface IPuruiService {
          */
         void onFail(String reason);
     }
+
+    void onCamZoomChanged(float zoomLevel);
 }

@@ -213,6 +213,25 @@ public class NativeCamManager {
 
         }
     };
+
+    public void onCamZoomChanged(float zoomLevel) {
+        try{
+            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(mCameraDevice.getId());
+            Rect activeRect = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+            float maximumZoomLevel = characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM) * 10;
+            int minW = (int) (activeRect.width() / maximumZoomLevel);
+            int minH = (int) (activeRect.height() / maximumZoomLevel);
+            int difW = activeRect.width() - minW;
+            int difH = activeRect.height() - minH;
+            int cropW = difW / 100 * (int) zoomLevel;
+            int cropH = difH / 100 * (int) zoomLevel;
+            Rect zoom = new Rect(cropW, cropH, activeRect.width() - cropW, activeRect.height() - cropH);
+            mPreviewBuilder.set(CaptureRequest.SCALER_CROP_REGION, zoom);
+            mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
     //Rotate Bitmap
 //    private int mZoom = 0; // 0~mMaxZoom之间变化
 //    private float mStepWidth; // 每次改变的宽度大小

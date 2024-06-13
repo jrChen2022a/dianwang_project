@@ -29,7 +29,6 @@ import com.purui.service.result.StateResult;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class PuruiServiceManager implements IPuruiService{
     private final Context mainCtx;
@@ -245,6 +244,20 @@ public class PuruiServiceManager implements IPuruiService{
             stopRecord();
         }
     }
+
+    @Override
+    public void onCamZoomChanged(float zoomLevel) {
+        if(camType == CAM_PAD){
+            if (iAidlInterface != null) {
+                try {
+                    iAidlInterface.onCamZoomChanged(zoomLevel);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void startRecord() {
         String resback = "";
         //操作杆摄像头是否已开启
@@ -371,7 +384,6 @@ public class PuruiServiceManager implements IPuruiService{
             inID = inID.replace(serialKey,"");
         }
         inID = Utils.removeSpecialChars(inID).toUpperCase();
-        inID = inID.replaceAll("\\d+KV", ""); //忽略 10KV 等字样
         boolean res = false;
         Bitmap retBitmap = null;
         String resID = "";
@@ -386,7 +398,7 @@ public class PuruiServiceManager implements IPuruiService{
             }
         }
         String ID = Utils.removeSpecialChars(resID).toUpperCase();
-        if (serialKey != null && ID.contains(serialKey) || ID.contains(inID)) {
+        if (serialKey != null && ID.contains(serialKey) || Utils.calculateJaccardSimilarity(ID, inID) > 0.5) {
             res = true;
         }
         return new OcrResult(res, resID, "识别成功", retBitmap);
@@ -505,10 +517,10 @@ public class PuruiServiceManager implements IPuruiService{
     }
 
     private static final HashMap<Integer, String> camType2cameraType = new HashMap<>();
-    private static final int CAM_WU = 0;
-    private static final int CAM_PAD = 1;
-    private static final int CAM_REMOTE = 2;
-    private static final int CAM_YAN = 3;
+    public static final int CAM_WU = 0;
+    public static final int CAM_PAD = 1;
+    public static final int CAM_REMOTE = 2;
+    public static final int CAM_YAN = 3;
     static {
         camType2cameraType.put(CAM_WU,"无");
         camType2cameraType.put(CAM_PAD,"平板");
