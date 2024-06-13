@@ -371,6 +371,7 @@ public class PuruiServiceManager implements IPuruiService{
             inID = inID.replace(serialKey,"");
         }
         inID = Utils.removeSpecialChars(inID).toUpperCase();
+        inID = inID.replaceAll("\\d+KV", ""); //忽略 10KV 等字样
         boolean res = false;
         Bitmap retBitmap = null;
         String resID = "";
@@ -385,7 +386,7 @@ public class PuruiServiceManager implements IPuruiService{
             }
         }
         String ID = Utils.removeSpecialChars(resID).toUpperCase();
-        if (serialKey != null && ID.contains(serialKey) || (serialKey == null && ID.contains(inID))) {
+        if (serialKey != null && ID.contains(serialKey) || ID.contains(inID)) {
             res = true;
         }
         return new OcrResult(res, resID, "识别成功", retBitmap);
