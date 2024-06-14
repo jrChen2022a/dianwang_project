@@ -93,13 +93,9 @@ public class DemoActivity extends AppCompatActivity {
 
             public IPuruiService.UIHandler onConnected() {
 //                Toast.makeText(getApplicationContext(),"服务已连接上",Toast.LENGTH_SHORT).show();
-                zoomMask.setZoomListener(new ZoomView.ZoomListener() {
-                    @Override
-                    public void onZoomChanged(float zoomLevel) {
-                        iPS.onCamZoomChanged(zoomLevel);
-                    }
-                });
-                return null;
+                rgCameraType.check(R.id.rbPad);
+                zoomMask.setZoomListener(zoomLevel -> iPS.onCamZoomChanged(zoomLevel));
+                return () -> rgCameraType.check(R.id.rbClose);
             }
             @Override
             public void onDisconnected() {
