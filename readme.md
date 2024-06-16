@@ -4,7 +4,7 @@
 
 ## 分支
 
-1. forYoute：交付给优特公司的aar包源码（后面优特的APP好久没再更新了，主要以forPurui分支为主）
+1. forYoute：交付给优特公司的aar包源码（后面优特的APP好久没再要求更新了，主要以forPurui分支为主）
 2. forPurui：交付给i国网应用的“本地程序”app源码
 3. ~~forPaper：论文APP端界面，请忽略~~
 
@@ -17,9 +17,7 @@
 1. client_demo_aidl：为应用程序的测试界面，不含实际功能
 2. puruiAidlLib：功能的实现库，打包给优特的aar只需用这个
 
-### 具体结构
-
-1. 界面（client_demo_aidl）：
+### 界面（client_demo_aidl）：
 
 **forYoute：**
 
@@ -93,7 +91,7 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
   - jniLIbs为用到的jar包依赖与c++动态库（arm64-v8a为设备cpu算子类型，使用ndk开发时需要考虑），动态库包含jni处调用的依赖、百度ocr模型调用（文字识别）所需依赖（具体可参考paddleocr项目，路径为deploy/android-demo）、从exp32cam摄像头录制视频时使用的ffmpeg等库
 
-代码的详细内容在各个代码文件中有相关注释，没有的话请参考方法名。总体来讲，如果涉及到接口改动（一般是输入输出格式问题），只需在IPuruiServce与PuruiServiceManager中进行相应更改，涉及到具体功能改动则根据调用链条一步步索引到相关模块进行更改（链条是PuruiServiceManager-〉IPuAidlInterface-〉PuService-〉IxxxHandle（如果有的话）-〉具体功能模块的实现代码）
+代码的详细内容在各个代码文件中有相关注释，没有的话请参考方法名。总体来讲，如果涉及到接口改动（一般是输入输出格式问题），只需在IPuruiServce与PuruiServiceManager中进行相应更改，涉及到具体功能改动则根据调用链条一步步索引到相关模块进行更改（链条是PuruiServiceManager -> IPuAidlInterface -> PuService -> IxxxHandle（如果有的话）-> 具体功能模块的实现代码）
 
 阅读功能的相关实现与PuService定义需要具有一定的Android开发基础，不懂的原生类百度一下
 
@@ -101,7 +99,7 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
 ### 检测模型
 
-基本流程为（参考[博客](https://blog.csdn.net/LHYlhy0825/article/details/123060624)）：
+基本流程如下：[参考博客](https://blog.csdn.net/LHYlhy0825/article/details/123060624)
 
 1. 将新的拍摄样本使用labelimg打标签成yolov5格式后混进原数据集中，路径为服务器1: /home/jrchen/datasets/dianwang/10c_reduce/yolo/outs/yolo
 
@@ -151,7 +149,7 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
    4. 将best.bin替换Android目录中的原best.bin
 
-      Android目录为：/dianwang_project/puruiAidlLib/src/main/assets
+      Android目录为：./dianwang_project/puruiAidlLib/src/main/assets/best.bin
 
 ### 文字识别模型
 
