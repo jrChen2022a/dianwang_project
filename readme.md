@@ -139,7 +139,7 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
    3. ONNX转param、bin
 
-      下载编译好的：[Releases · Tencent/ncnn · GitHub](https://github.com/Tencent/ncnn/releases)，根据自己的平台和配置选择合适的编译好的文件。此处可选[ncnn-20240102-windows-vs2019-shared.zip](ncnn-20240102-windows-vs2019-shared.zip)，下载到自己的windows电脑上，然后解压，进入路径./x64/bin，使用onnx2ncnn.exe来实现转换，需要先将第二步的best-sim.onnx复制到./x64/bin中并转到此位置的cmd，输入：
+      下载编译好的：[Releases · Tencent/ncnn · GitHub](https://github.com/Tencent/ncnn/releases)，根据自己的平台和配置选择合适的编译好的文件。此处可选[ncnn-20240102-windows-vs2019-shared.zip](https://github.com/Tencent/ncnn/releases/download/20240410/ncnn-20240410-windows-vs2019-shared.zip)，下载到自己的windows电脑上，然后解压，进入路径./x64/bin，使用onnx2ncnn.exe来实现转换，需要先将第二步的best-sim.onnx复制到./x64/bin中并转到此位置的cmd，输入：
 
       ```
       onnx2ncnn.exe best-sim.onnx best.param best.bin
