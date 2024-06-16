@@ -12,7 +12,7 @@
 
 **modules：**
 
-![image-20240605154129101](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240605154129101.png)
+![image-20240616153128589](imgs/image-20240616153128589.png)
 
 1. client_demo_aidl：为应用程序的测试界面，不含实际功能
 2. puruiAidlLib：功能的实现库，打包给优特的aar只需用这个
@@ -23,7 +23,7 @@
 
 **forYoute：**
 
-DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240605154751664.png)
+DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
 功能顾名思义，跟遥控器一个道理，用于测试给优特提供的功能是否正常。代码中有相关注释，不难理解。
 
@@ -33,7 +33,7 @@ DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Applicati
 
  1. 提供给普瑞的“本地AI程序”：DemoActivity.java 
 
-    ![image-20240605214540365](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240605214540365.png)
+    ![image-20240605214540365](imgs/image-20240605214540365.png)
 
 ​	左边显示相机帧，右上角为i国网传过来解析的参数（传过来的intent使用base64编码过了），代码主要用于解析来自i国网的信号，有注释。
 
@@ -42,11 +42,11 @@ DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Applicati
 - 来自i国网的intent
 - 调试时可设置MAIN，在AndroidManifest文件里面配置
 
-​			![image-20240605214122860](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240605214122860.png)
+​			![image-20240605214122860](imgs/image-20240605214122860.png)
 
 2. 调试功能的程序：InnerActivity.java
 
-   ![image-20240605214809506](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240605214809506.png)
+   ![image-20240605214809506](imgs/image-20240605214809506.png)
 
 ​	遥控器+1，所有模块顾名思义，代码注释也较多。
 
@@ -54,7 +54,7 @@ DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Applicati
 
 ​	想调试基本功能的话，得去AndroidManifest里面更改成MAIN，这个Activity就是用来测试我们开发的功能是否正常的，也**多用于测试更新的模型是否有效**。
 
-​			![image-20240605215131921](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240605215131921.png)
+​			![image-20240605215131921](imgs/image-20240605215131921.png)
 
 
 
@@ -62,7 +62,7 @@ DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Applicati
 
 这里是核心代码，所有功能实现都在这，以下以forPurui分支为例
 
-![image-20240616132804495](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240616132804495.png)
+![image-20240616132804495](imgs/image-20240616132804495.png)
 
 - .cxx 开头的为检测模型相关ndk代码自动生成的，可忽略（模型部署一般会用到ndk开发，即使用c++代码写模型的调用流程，再提供java接口给上层java代码使用，称为ndk开发，有兴趣可以百度）
 
@@ -70,7 +70,7 @@ DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Applicati
 
   - java代码在src/main/java中
 
-    ![image-20240616134108198](/Users/chenjianrui/Library/Application Support/typora-user-images/image-20240616134108198.png)
+    ![image-20240616134108198](imgs/image-20240616134108198.png)
 
     - 包名是com.purui.service
     - IPuruiService为提供给外部调用的接口
@@ -147,7 +147,7 @@ DemoActivity.java![image-20240605154751664](/Users/chenjianrui/Library/Applicati
 
       就会生成以下best.bin和best.param文件
 
-      ![2024-06-16 151249](/Users/chenjianrui/Pictures/2024-06-16 151249.png)
+      ![2024-06-16 151249](imgs/2024-06-16 151249.png)
 
    4. 将best.bin替换Android目录中的原best.bin
 
