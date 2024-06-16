@@ -147,7 +147,7 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
       就会生成以下best.bin和best.param文件
 
-      ![2024-06-16 151249](imgs/2024-06-16 151249.png)
+      ![2024-06-16_151249](imgs/2024-06-16_151249.png)
 
    4. 将best.bin替换Android目录中的原best.bin
 
