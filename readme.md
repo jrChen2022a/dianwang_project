@@ -97,9 +97,9 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
 阅读功能的相关实现与PuService定义需要具有一定的Android开发基础，不懂的原生类百度一下
 
-# 模型更换流程
+## 模型更换流程
 
-## 检测模型
+### 检测模型
 
 基本流程为（参考[博客](https://blog.csdn.net/LHYlhy0825/article/details/123060624)）：
 
@@ -153,7 +153,7 @@ DemoActivity.java![image-20240605154751664](imgs/image-20240605154751664.png)
 
       Android目录为：/dianwang_project/puruiAidlLib/src/main/assets
 
-## 文字识别模型
+### 文字识别模型
 
 使用的是[PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)，目前只是使用官方提供的v2模型（包含文字检测、方向识别、文字识别三个模型）
 
