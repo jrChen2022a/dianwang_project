@@ -20,7 +20,7 @@ public class OcrManager implements IModelHandle {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         String modelPath = sharedPreferences.getString(ctx.getString(R.string.MODEL_PATH_KEY),
                 ctx.getString(R.string.MODEL_PATH_DEFAULT));
-        String labelPath = sharedPreferences.getString(ctx.getString(R.string.LABEL_PATH_KEY),ctx.getString(R.string.LABEL_PATH_DEFAULT));
+        String labelPath = sharedPreferences.getString("LABEL_PATH_KEY","labels/keys.txt");
         int cpuThreadNum = Integer.parseInt(sharedPreferences.getString(ctx.getString(R.string.CPU_THREAD_NUM_KEY),
                 ctx.getString(R.string.CPU_THREAD_NUM_DEFAULT)));
         String cpuPowerMode =
