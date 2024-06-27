@@ -142,7 +142,7 @@ public class DemoActivity extends AppCompatActivity {
             if(isCamOpen){
                 mThreadPool.execute(()->{
                     switch (invokeType){
-                        case 1:
+                        case 1: case 6:
                             if(targetId == null){
                                 handler.post(()-> goBackApp("0", gson.toJson(new LockResult(false,"未传入有效参数，当前："+mUri))));
                                 break;
@@ -286,6 +286,11 @@ public class DemoActivity extends AppCompatActivity {
                         btnPho.setText("验电");
                         selectPhase = jsonObject.getString("currentPhase").charAt(0);
                         tvKey.setText("请验明"+selectPhase+"相是否带电");
+                        break;
+                    case 6://signature
+                        btnPho.setText("拍照");
+                        targetId = jsonObject.getString("targetName");
+                        tvKey.setText("请识别签名是否为：\n"+targetId);
                         break;
                     default:
                         break;
